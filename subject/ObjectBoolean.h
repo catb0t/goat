@@ -35,6 +35,7 @@ namespace goat {
 		ObjectBoolean * toObjectBoolean() override;
 		WideString toWideString() override;
 		bool equals(Object *_obj) override;
+		static PrimitiveHandler * getHandler();
 
 		class Proto : public Object {
 		public:
@@ -64,7 +65,6 @@ namespace goat {
 				Object * run(Scope *scope) override;
 				static Object *getInstance();
 			};
-
 		};
 	};
 

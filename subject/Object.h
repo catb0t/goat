@@ -72,6 +72,7 @@ namespace goat {
 		union {
 			Object *obj;
 			bool    B;
+			wchar   C;
 			lint    I;
 			ldouble R;
 		} data;

@@ -111,4 +111,33 @@ namespace goat {
 		return &__this;
 	}
 
+	class BooleanHandler : public PrimitiveHandler {
+	public:
+		static PrimitiveHandler *getInstance() {
+			static BooleanHandler __this;
+			return &__this;
+		}
+
+		Object * toObject(Container *ctr) override {
+			return new ObjectBoolean(ctr->data.B);
+		}
+
+		bool equals(Container *left, Container *right) {
+			if (right->isPrimitive()) {
+				return left->data.B == right->data.B;
+			}
+			else {
+				ObjectBoolean *robj = right->data.obj->toObjectBoolean();
+				return robj && left->data.B == robj->value;
+			}
+		}
+
+		WideString toWideStringNotation(Container *ctr) override {
+			return ctr->data.B ? L"true" : L"false";
+		}
+	};
+
+	PrimitiveHandler * ObjectBoolean::getHandler() {
+		return BooleanHandler::getInstance();
+	}
 }
