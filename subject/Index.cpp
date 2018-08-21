@@ -112,7 +112,9 @@ namespace goat {
 				// search key in objects
 				{
 					State *p = prev;
-					p->ret(left->find(index));
+					// TODO: review
+					Container tmp(index);
+					p->ret(left->find(&tmp)->toObject());
 					delete this;
 					return p;
 				}

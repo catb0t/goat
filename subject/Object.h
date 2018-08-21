@@ -61,8 +61,9 @@ namespace goat {
 		virtual ~PrimitiveHandler() {
 		}
 
-		virtual Object * toObject(Container *container) = 0;
-		virtual WideString toWideStringNotation(Container *container) = 0;
+		virtual Object * toObject(Container *ctr) = 0;
+		virtual bool equals(Container *left, Container *right) = 0;
+		virtual WideString toWideStringNotation(Container *ctr) = 0;
 	};
 
 	class Container {
@@ -87,6 +88,7 @@ namespace goat {
 
 		inline bool isPrimitive();
 		inline bool isUndefined();
+		inline bool equals(Container *right);
 		inline Object *toObject();
 		inline ObjectArray *toObjectArray();
 		inline ObjectString *toObjectString();
@@ -134,12 +136,12 @@ namespace goat {
 		static inline String getKey(int32 index);
 	private:
 		Container *find_(int32 index);
-		Object *find_(WideString key);
-		Object *find_(Object *key);
+		Container *find_(WideString key);
+		Container *find_(Container *key);
 	public:
 		Container *find(int32 index);
-		Object *find(WideString key);
-		Object *find(Object *key);
+		Container *find(WideString key);
+		Container *find(Container *key);
 		void insert(int32 index, Object *value);
 		void insert(Object *key, Object *value);
 		bool replace(int32 index, Object *repl);
@@ -184,6 +186,13 @@ namespace goat {
 
 	bool Container::isUndefined() {
 		return handler == nullptr && data.obj->toObjectUndefined() != nullptr;
+	}
+
+	bool Container::equals(Container *right) {
+		if (handler != nullptr) {
+			return handler->equals(this, right);
+		}
+		return data.obj->equals(right->toObject());
 	}
 
 	Object * Container::toObject() {

@@ -122,20 +122,15 @@ namespace goat {
 		return found ? found : ObjectUndefined::getContainer();
 	}
 
-	Object * Object::find_(WideString key) {
-		Container *container = key.isAscii() ? objects.find(searchIndex(key.toString())) : nullptr;
-		Object *found = nullptr;
-		if (container) {
-			found = container->toObject();
-		}
-		else {
+	Container * Object::find_(WideString key) {
+		Container *found = key.isAscii() ? objects.find(searchIndex(key.toString())) : nullptr;
+		if (!found) {
 			List<Pair>::Item *pair = chain.first;
 			while (pair) {
 				ObjectString *objStr = pair->data.key.toObjectString();
 				if (objStr) {
 					if (key == objStr->value) {
-						found = pair->data.value.toObject();
-						break;
+						return &pair->data.value;
 					}
 				}
 				pair = pair->next;
@@ -147,22 +142,21 @@ namespace goat {
 		return found;
 	}
 
-	Object * Object::find(WideString key) {
-		Object *found = find_(key);
-		return found ? found : ObjectUndefined::getInstance();
+	Container * Object::find(WideString key) {
+		Container *found = find_(key);
+		return found ? found : ObjectUndefined::getContainer();
 	}
 
-	Object * Object::find_(Object *key) {
+	Container * Object::find_(Container *key) {
 		ObjectString *objStr = key->toObjectString();
 		if (objStr) {
 			return find_(objStr->value);
 		}
-		Object *found = nullptr;
+		Container *found = nullptr;
 		List<Pair>::Item *pair = chain.first;
 		while (pair) {
-			if (key->equals(pair->data.key.toObject())) {
-				found = pair->data.value.toObject();
-				break;
+			if (key->equals(&pair->data.key)) {
+				return &pair->data.value;
 			}
 			pair = pair->next;
 		}
@@ -172,9 +166,9 @@ namespace goat {
 		return found;
 	}
 
-	Object * Object::find(Object *key) {
-		Object *found = find_(key);
-		return found ? found : ObjectUndefined::getInstance();
+	Container * Object::find(Container *key) {
+		Container *found = find_(key);
+		return found ? found : ObjectUndefined::getContainer();
 	}
 
 	void Object::insert(int32 index, Object *value) {
