@@ -39,6 +39,7 @@ namespace goat {
 		WideString toWideString() override;
 		bool equals(Object *obj) override;
 		static Object *getInstance();
+		static Container *getContainer();
 	};
 
 }

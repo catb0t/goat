@@ -51,8 +51,13 @@ namespace goat {
 		return obj == this || obj == ObjectVoid::getInstance();
 	}
 
-	Object *  ObjectUndefined::getInstance() {
+	Object * ObjectUndefined::getInstance() {
 		static ObjectUndefined __this;
 		return &__this;
+	}
+
+	Container * ObjectUndefined::getContainer() {
+		static Container __container(getInstance());
+		return &__container;
 	}
 }

@@ -62,37 +62,43 @@ namespace goat {
 			}
 			return expr->right->createState(this);
 		case EXECUTE: {
-			Object *obj = left->find(expr->operIndex);
-			if (obj->toObjectUndefined()) {
+			Container *ctr = left->find(expr->operIndex);
+			if (ctr->isUndefined()) {
 				return throw_(new OperatorIsNotDefined(expr->oper->value));
 			}
-			ObjectFunction *of = obj->toObjectFunction();
-			if (of) {
-				changeScope(of->context->clone());
-				scope->this_ = left;
-				scope->arguments = new ObjectArray();
-				scope->arguments->vector.pushBack(right);
-				scope->objects.insert(Resource::i_arguments(), scope->arguments);
-				scope->proto.pushBack(scope->proto[0]);
-				scope->proto[0] = left;
-				if (of->function->args) {
-					unsigned int i = 0, count = scope->arguments->vector.len();
-					Token *name = of->function->args->first;
-					while (name && i < count) {
-						scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]);
-						i++;
-						name = name->next;
-					}
-				}
-				return of->function->createState(this);
+			if (ctr->isPrimitive()) {
+				// TODO: implement
 			}
-			ObjectBuiltIn *obi = obj->toObjectBuiltIn();
-			if (obi) {
-				cloneScope();
-				scope->this_ = left;
-				scope->arguments = new ObjectArray();
-				scope->arguments->vector.pushBack(right);
-				return obi->createState(this);
+			else {
+				Object *obj = ctr->data.obj;
+				ObjectFunction *of = obj->toObjectFunction();
+				if (of) {
+					changeScope(of->context->clone());
+					scope->this_ = left;
+					scope->arguments = new ObjectArray();
+					scope->arguments->vector.pushBack(right);
+					scope->objects.insert(Resource::i_arguments(), scope->arguments);
+					scope->proto.pushBack(scope->proto[0]);
+					scope->proto[0] = left;
+					if (of->function->args) {
+						unsigned int i = 0, count = scope->arguments->vector.len();
+						Token *name = of->function->args->first;
+						while (name && i < count) {
+							scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]);
+							i++;
+							name = name->next;
+						}
+					}
+					return of->function->createState(this);
+				}
+				ObjectBuiltIn *obi = obj->toObjectBuiltIn();
+				if (obi) {
+					cloneScope();
+					scope->this_ = left;
+					scope->arguments = new ObjectArray();
+					scope->arguments->vector.pushBack(right);
+					return obi->createState(this);
+				}
 			}
 			return throw_(new IsNotAFunction(expr->oper->value));
 		}

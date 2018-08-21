@@ -85,7 +85,11 @@ namespace goat {
 			data.obj = _obj;
 		}
 
+		inline bool isPrimitive();
+		inline bool isUndefined();
 		inline Object *toObject();
+		inline ObjectArray *toObjectArray();
+		inline ObjectString *toObjectString();
 		inline void mark();
 		inline WideString toWideStringNotation();
 	};
@@ -129,11 +133,11 @@ namespace goat {
 		static inline int32 searchIndex(String key);
 		static inline String getKey(int32 index);
 	private:
-		Object *find_(int32 index);
+		Container *find_(int32 index);
 		Object *find_(WideString key);
 		Object *find_(Object *key);
 	public:
-		Object *find(int32 index);
+		Container *find(int32 index);
 		Object *find(WideString key);
 		Object *find(Object *key);
 		void insert(int32 index, Object *value);
@@ -174,11 +178,27 @@ namespace goat {
 	};
 
 
+	bool Container::isPrimitive() {
+		return handler != nullptr;
+	}
+
+	bool Container::isUndefined() {
+		return handler == nullptr && data.obj->toObjectUndefined() != nullptr;
+	}
+
 	Object * Container::toObject() {
 		if (handler)  {
 			return handler->toObject(this);
 		}
 		return data.obj;
+	}
+
+	ObjectArray * Container::toObjectArray() {
+		return handler == nullptr ? data.obj->toObjectArray() : nullptr;
+	}
+
+	ObjectString * Container::toObjectString() {
+		return handler == nullptr ? data.obj->toObjectString() : nullptr;
 	}
 
 	void Container::mark() {

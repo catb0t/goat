@@ -76,7 +76,8 @@ namespace goat {
 					*context = left;
 				}
 				State *p = prev;
-				p->ret(left->find(field->nameIndex));
+				// TODO: review
+				p->ret(left->find(field->nameIndex)->toObject());
 				delete this;
 				return p;
 			}

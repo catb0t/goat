@@ -35,7 +35,16 @@ namespace goat {
 
 	typedef long long int lint;
 	typedef unsigned long long int ulint;
+
+#ifndef __GNUC__
 	typedef long double ldouble;
+#else
+#if __GNUC__ < 4
+	typedef long double ldouble;
+#else
+	typedef double ldouble;
+#endif
+#endif
 
 	typedef uint8_t uint8;
 	typedef uint32_t uint32;

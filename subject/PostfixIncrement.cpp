@@ -58,32 +58,38 @@ namespace goat {
 			if (!oldValue) {
 				return throw_(new CanNotReadOperatorOfUndefined(expr->oper->value));
 			}
-			Object *obj = oldValue->find(expr->operIndex);
-			if (obj->toObjectUndefined()) {
-				return throw_(new OperatorIsNotDefined(expr->oper->value));
+			Container *ctr = oldValue->find(expr->operIndex);
+			if (ctr->isPrimitive()) {
+				// TODO: implement
 			}
-			ObjectFunction *of = obj->toObjectFunction();
-			if (of) {
-				changeScope(of->context->clone());
-				scope->this_ = oldValue;
-				scope->arguments = new ObjectArray();
-				scope->objects.insert(Resource::i_arguments(), scope->arguments);
-				if (of->function->args) {
-					unsigned int i = 0, count = scope->arguments->vector.len();
-					Token *name = of->function->args->first;
-					while (name && i < count) {
-						scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]);
-						i++;
-						name = name->next;
-					}
+			else {
+				Object *obj = ctr->data.obj;
+				if (obj->toObjectUndefined()) {
+					return throw_(new OperatorIsNotDefined(expr->oper->value));
 				}
-				return of->function->createState(this);
-			}
-			ObjectBuiltIn *obi = obj->toObjectBuiltIn();
-			if (obi) {
-				cloneScope();
-				scope->this_ = oldValue;
-				return obi->createState(this);
+				ObjectFunction *of = obj->toObjectFunction();
+				if (of) {
+					changeScope(of->context->clone());
+					scope->this_ = oldValue;
+					scope->arguments = new ObjectArray();
+					scope->objects.insert(Resource::i_arguments(), scope->arguments);
+					if (of->function->args) {
+						unsigned int i = 0, count = scope->arguments->vector.len();
+						Token *name = of->function->args->first;
+						while (name && i < count) {
+							scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]);
+							i++;
+							name = name->next;
+						}
+					}
+					return of->function->createState(this);
+				}
+				ObjectBuiltIn *obi = obj->toObjectBuiltIn();
+				if (obi) {
+					cloneScope();
+					scope->this_ = oldValue;
+					return obi->createState(this);
+				}
 			}
 			return throw_(new IsNotAFunction(expr->oper->value));
 		}

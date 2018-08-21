@@ -97,20 +97,15 @@ namespace goat {
 
 	}
 
-	Object * Object::find_(int32 index) {
-		Container *container = objects.find(index);
-		Object *found = nullptr;
-		if (container) {
-			found = container->toObject();
-		}
-		else {
+	Container * Object::find_(int32 index) {
+		Container *found = objects.find(index);
+		if (!found) {
 			List<Pair>::Item *pair = chain.first;
 			while (pair) {
-				ObjectString *objStr = pair->data.key.toObject()->toObjectString();
+				ObjectString *objStr = pair->data.key.toObjectString();
 				if (objStr) {
 					if (getKey(index) == objStr->value) {
-						found = pair->data.value.toObject();
-						break;
+						return &pair->data.value;
 					}
 				}
 				pair = pair->next;
@@ -122,9 +117,9 @@ namespace goat {
 		return found;
 	}
 
-	Object * Object::find(int32 index) {
-		Object *found = find_(index);
-		return found ? found : ObjectUndefined::getInstance();
+	Container * Object::find(int32 index) {
+		Container *found = find_(index);
+		return found ? found : ObjectUndefined::getContainer();
 	}
 
 	Object * Object::find_(WideString key) {
@@ -136,7 +131,7 @@ namespace goat {
 		else {
 			List<Pair>::Item *pair = chain.first;
 			while (pair) {
-				ObjectString *objStr = pair->data.key.toObject()->toObjectString();
+				ObjectString *objStr = pair->data.key.toObjectString();
 				if (objStr) {
 					if (key == objStr->value) {
 						found = pair->data.value.toObject();
@@ -556,22 +551,28 @@ namespace goat {
 			step = DONE;
 			proto = scope->this_;
 			Object *blank = scope->arguments->vector[0];
-			Object *funcClone = blank->find(Resource::i_clone());
-			ObjectFunction *of = funcClone->toObjectFunction();
-			if (of) {
-				changeScope(of->context->clone());
-				scope->arguments = nullptr;
-				scope->this_ = blank;
-				scope->proto.pushBack(scope->proto[0]);
-				scope->proto[0] = blank;
-				return of->function->createState(this);
+			Container *ctrClone = blank->find(Resource::i_clone());
+			if (ctrClone->isPrimitive()) {
+				// TODO: implement
 			}
-			ObjectBuiltIn * obi = funcClone->toObjectBuiltIn();
-			if (obi) {
-				cloneScope();
-				scope->arguments = nullptr;
-				scope->this_ = blank;
-				return obi->createState(this);
+			else {
+				Object *funcClone = ctrClone->data.obj;
+				ObjectFunction *of = funcClone->toObjectFunction();
+				if (of) {
+					changeScope(of->context->clone());
+					scope->arguments = nullptr;
+					scope->this_ = blank;
+					scope->proto.pushBack(scope->proto[0]);
+					scope->proto[0] = blank;
+					return of->function->createState(this);
+				}
+				ObjectBuiltIn * obi = funcClone->toObjectBuiltIn();
+				if (obi) {
+					cloneScope();
+					scope->arguments = nullptr;
+					scope->this_ = blank;
+					return obi->createState(this);
+				}
 			}
 			return throw_(new IsNotAFunction(Resource::s_clone));
 		}
@@ -745,20 +746,26 @@ namespace goat {
 		case CLONE: {
 			step = DONE;
 			Object *blank = scope->this_;
-			Object *funcClone = scope->this_->find(Resource::i_clone());
-			ObjectFunction *of = funcClone->toObjectFunction();
-			if (of) {
-				changeScope(of->context->clone());
-				scope->arguments = nullptr;
-				scope->this_ = blank;
-				return of->function->createState(this);
+			Container *ctrClone = scope->this_->find(Resource::i_clone());
+			if (ctrClone->isPrimitive()) {
+				// TODO: implement
 			}
-			ObjectBuiltIn * obi = funcClone->toObjectBuiltIn();
-			if (obi) {
-				cloneScope();
-				scope->arguments = nullptr;
-				scope->this_ = blank;
-				return obi->createState(this);
+			else {
+				Object *funcClone = ctrClone->data.obj;
+				ObjectFunction *of = funcClone->toObjectFunction();
+				if (of) {
+					changeScope(of->context->clone());
+					scope->arguments = nullptr;
+					scope->this_ = blank;
+					return of->function->createState(this);
+				}
+				ObjectBuiltIn * obi = funcClone->toObjectBuiltIn();
+				if (obi) {
+					cloneScope();
+					scope->arguments = nullptr;
+					scope->this_ = blank;
+					return obi->createState(this);
+				}
 			}
 			return throw_(new IsNotAFunction(Resource::s_clone));
 		}

@@ -104,9 +104,9 @@ namespace goat {
 			if (l) {
 				// write stack trace information
 				ObjectArray *t = nullptr;
-				Object *f = obj->find(Resource::i_trace());
-				if (f) {
-					t = f->toObjectArray();
+				Container *c = obj->find(Resource::i_trace());
+				if (c) {
+					t = c->toObjectArray();
 				}
 				if (!t) {
 					t = new ObjectArray();

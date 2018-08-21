@@ -145,12 +145,10 @@ namespace goat {
 									}
 									else if (cmd.len() > 1 && cmd[0] == L'$') {
 										String name = cmd.subString(1, len - 1).toString();
-										Object *obj = Thread::current->state->scope->find(Object::createIndex(name));
-										if (obj) {
-											console.write((WideStringBuilder() << 
-												name << L": " << obj->toWideStringNotation() << L'\n'
-											).toWideString());
-										}
+										Container *ctr = Thread::current->state->scope->find(Object::createIndex(name));
+										console.write((WideStringBuilder() <<
+											name << L": " << ctr->toWideStringNotation() << L'\n'
+										).toWideString());
 									}
 									else if (cmd == Resource::w_continue || cmd == L"c") {
 										Thread::current->mode = State::DebugMode::BREAKPOINT;

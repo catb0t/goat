@@ -1,1 +1,1 @@
-g++ -std=c++11 *.cpp
+g++ -std=c++11 -march=k8 *.cpp

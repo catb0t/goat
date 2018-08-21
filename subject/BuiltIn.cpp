@@ -157,7 +157,7 @@ namespace goat {
 		ObjectArray * args = scope->arguments;
 		if (args->vector.len() > 0) {
 			Object *obj = args->vector[0];
-			return new ObjectBoolean(obj->toObjectUndefined() == nullptr);
+			return new ObjectBoolean(obj != nullptr && obj->toObjectUndefined() == nullptr);
 		}
 		return new IllegalArgument();
 	}

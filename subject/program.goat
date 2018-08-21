@@ -1,1 +1,19 @@
-print(new Null());
+import "xml.goat";
+
+debug;
+
+var xml = "<root>Data</root>";
+var result = XML.parse(xml);
+
+if (result == null) {
+	print("nothing");
+}
+else {
+	var str = result.toString();
+	if (str != xml) {
+		print("failed, expected: \n\n" + xml + "\n\nactual:\n\n" + str + "\n");
+	}
+	else {
+		print("passed");
+	}
+}
