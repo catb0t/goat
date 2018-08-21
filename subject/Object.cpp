@@ -101,8 +101,12 @@ namespace goat {
 	}
 
 	Object * Object::find_(int32 index) {
+		Object **p_found = objects.find(index);
 		Object *found = nullptr;
-		if (!objects.find(index, &found)) {
+		if (p_found) {
+			found = *p_found;
+		}
+		else {
 			List<Pair>::Item *pair = chain.first;
 			while (pair) {
 				ObjectString *objStr = pair->data.key->toObjectString();
@@ -127,8 +131,12 @@ namespace goat {
 	}
 
 	Object * Object::find_(WideString key) {
+		Object **p_found = key.isAscii() ? objects.find(searchIndex(key.toString())) : nullptr;
 		Object *found = nullptr;
-		if (!key.isAscii() || !objects.find(searchIndex(key.toString()), &found)) {
+		if (p_found) {
+			found = *p_found;
+		}
+		else {
 			List<Pair>::Item *pair = chain.first;
 			while (pair) {
 				ObjectString *objStr = pair->data.key->toObjectString();
@@ -219,9 +227,9 @@ namespace goat {
 	}
 
 	void Object::findAll(String key, PlainVector<Object *> *vector) {
-		Object *found = nullptr;
-		if (objects.find(createIndex(key), &found)) {
-			vector->pushBack(found);
+		Object **p_found = objects.find(createIndex(key));
+		if (p_found) {
+			vector->pushBack(*p_found);
 		}
 		for (unsigned int i = 0; i < proto.len(); i++) {
 			proto[i]->findAll(key, vector);

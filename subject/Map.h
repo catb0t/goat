@@ -103,17 +103,14 @@ namespace goat {
 			}
 		}
 
-		bool find(Key key, Value *value = nullptr) {
+		Value * find(Key key) {
 			if (top) {
 				Item *item = (Item*)top->find(key);
 				if (item) {
-					if (value) {
-						*value = item->value;
-					}
-					return true;
+					return &item->value;
 				}
 			}
-			return false;
+			return nullptr;
 		}
 
 		bool replace(Key key, Value value) {

@@ -35,22 +35,20 @@ namespace goat {
 		Map<String, int32> tree;
 
 		int32 createIndex(String string) {
-			int32 index;
-			
-			if (tree.find(string, &index))
-				return index;
+			int32 *p_index = tree.find(string);
+			if (p_index)
+				return *p_index;
 
-			index = vector.len();
+			int32 index = vector.len();
 			vector.pushBack(string);
 			tree.insert(string, index);
 			return index;
 		}
 
 		int32 searchIndex(String string) {
-			int32 index;
-
-			if (tree.find(string, &index))
-				return index;
+			int32 *p_index = tree.find(string);
+			if (p_index)
+				return *p_index;
 
 			return -1;
 		}
