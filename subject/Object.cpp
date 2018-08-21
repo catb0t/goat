@@ -78,15 +78,12 @@ namespace goat {
 	}
 
 	void Object::mark_2() {
-		objects.forEach([](int32 index, Object *obj) {
-			if (obj)
-				obj->mark();
+		objects.forEach([](int32 &index, Container &container) {
+			container.mark();
 		});
 		chain.forEach([](Pair &pair) {
-			if (pair.key)
-				pair.key->mark();
-			if (pair.value)
-				pair.value->mark();
+			pair.key.mark();
+			pair.value.mark();
 		});
 		proto.forEach([](Object *obj) {
 			if (obj)
@@ -101,18 +98,18 @@ namespace goat {
 	}
 
 	Object * Object::find_(int32 index) {
-		Object **p_found = objects.find(index);
+		Container *container = objects.find(index);
 		Object *found = nullptr;
-		if (p_found) {
-			found = *p_found;
+		if (container) {
+			found = container->toObject();
 		}
 		else {
 			List<Pair>::Item *pair = chain.first;
 			while (pair) {
-				ObjectString *objStr = pair->data.key->toObjectString();
+				ObjectString *objStr = pair->data.key.toObject()->toObjectString();
 				if (objStr) {
 					if (getKey(index) == objStr->value) {
-						found = pair->data.value;
+						found = pair->data.value.toObject();
 						break;
 					}
 				}
@@ -131,18 +128,18 @@ namespace goat {
 	}
 
 	Object * Object::find_(WideString key) {
-		Object **p_found = key.isAscii() ? objects.find(searchIndex(key.toString())) : nullptr;
+		Container *container = key.isAscii() ? objects.find(searchIndex(key.toString())) : nullptr;
 		Object *found = nullptr;
-		if (p_found) {
-			found = *p_found;
+		if (container) {
+			found = container->toObject();
 		}
 		else {
 			List<Pair>::Item *pair = chain.first;
 			while (pair) {
-				ObjectString *objStr = pair->data.key->toObjectString();
+				ObjectString *objStr = pair->data.key.toObject()->toObjectString();
 				if (objStr) {
 					if (key == objStr->value) {
-						found = pair->data.value;
+						found = pair->data.value.toObject();
 						break;
 					}
 				}
@@ -168,8 +165,8 @@ namespace goat {
 		Object *found = nullptr;
 		List<Pair>::Item *pair = chain.first;
 		while (pair) {
-			if (key->equals(pair->data.key)) {
-				found = pair->data.value;
+			if (key->equals(pair->data.key.toObject())) {
+				found = pair->data.value.toObject();
 				break;
 			}
 			pair = pair->next;
@@ -190,7 +187,7 @@ namespace goat {
 		List<Pair>::Item *pair = chain.first;
 		while (pair) {
 			auto next = pair->next;
-			ObjectString *objStr = pair->data.key->toObjectString();
+			ObjectString *objStr = pair->data.key.toObject()->toObjectString();
 			if (objStr && objStr->value == getKey(index)) {
 				chain.remove(pair);
 			}
@@ -205,7 +202,7 @@ namespace goat {
 		}
 		List<Pair>::Item *pair = chain.first;
 		while (pair) {
-			if (key->equals(pair->data.key)) {
+			if (key->equals(pair->data.key.toObject())) {
 				pair->data.value = value;
 				return;
 			}
@@ -227,9 +224,9 @@ namespace goat {
 	}
 
 	void Object::findAll(String key, PlainVector<Object *> *vector) {
-		Object **p_found = objects.find(createIndex(key));
-		if (p_found) {
-			vector->pushBack(*p_found);
+		Container *container = objects.find(createIndex(key));
+		if (container) {
+			vector->pushBack(container->toObject());
 		}
 		for (unsigned int i = 0; i < proto.len(); i++) {
 			proto[i]->findAll(key, vector);
@@ -239,10 +236,10 @@ namespace goat {
 	void Object::findUnique(String key, PlainVector<Object *> *result) {
 		PlainVector<Object *> tmp;
 		findAll(key, &tmp);
-		int l = (int)tmp.len();
+		int32 l = (int32)tmp.len();
 		if (l > 0) {
 			result->pushBack(tmp[l - 1]);
-			for (int i = l - 2; i >= 0; i--) {
+			for (int32 i = l - 2; i >= 0; i--) {
 				Object *obj = tmp[i];
 				if (!result->indexOf(obj)) {
 					result->pushBack(obj);
@@ -256,12 +253,12 @@ namespace goat {
 			pobj->flat(fobj);
 		});
 
-		objects.forEach([&](int32 index, Object *obj) {
-			fobj->insert(index, obj);
+		objects.forEach([&](int32 &index, Container &container) {
+			fobj->insert(index, container.toObject());
 		});
 
 		chain.forEach([&](Pair pair) {
-			fobj->insert(pair.key, pair.value);
+			fobj->insert(pair.key.toObject(), pair.value.toObject());
 		});
 	}
 
@@ -269,8 +266,8 @@ namespace goat {
 		Object *fobj = new Object();
 		flat(fobj);
 
-		fobj->objects.forEach([&](int32 index, Object *obj) {
-			vector->pushBack(Pair(new ObjectString(getKey(index).toWideString()), obj));
+		fobj->objects.forEach([&](int32 &index, Container &container) {
+			vector->pushBack(Pair(new ObjectString(getKey(index).toWideString()), container.toObject()));
 		});
 
 		fobj->chain.forEach([&](Pair pair) {
@@ -321,19 +318,19 @@ namespace goat {
 		WideStringBuilder b;
 		b << (wchar)'{';
 		int i = 0;
-		objects.forEach([&](int32 index, Object *obj) {
+		objects.forEach([&](int32 &index, Container &container) {
 			if (i) {
 				b << L',';
 			}
 			i++;
-			b << getKey(index) << L':' << obj->toWideStringNotation();
+			b << getKey(index) << L':' << container.toWideStringNotation();
 		});
 		chain.forEach([&](Pair &pair) {
 			if (i) {
 				b << L',';
 			}
 			i++;
-			b << pair.key->toWideStringNotation() << L':' << pair.value->toWideStringNotation();
+			b << pair.key.toWideStringNotation() << L':' << pair.value.toWideStringNotation();
 		});
 		b << (wchar)'}';
 		return b.toWideString();

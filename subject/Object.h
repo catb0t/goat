@@ -58,30 +58,36 @@ namespace goat {
 
 	class PrimitiveHandler {
 	public:
-		virtual Object * toObject(Container *ctr);
+		virtual ~PrimitiveHandler() {
+		}
+
+		virtual Object * toObject(Container *container) = 0;
+		virtual WideString toWideStringNotation(Container *container) = 0;
 	};
 
 	class Container {
 	public:
 		PrimitiveHandler *handler;
 		union {
-			Object *_object;
-			bool _boolean;
-			lint _integer;
-			ldouble _real;
+			Object *obj;
+			bool    B;
+			lint    I;
+			ldouble R;
 		} data;
 
-		Container(Object *_object) {
+		Container() {
 			handler = nullptr;
-			data._object = _object;
+			data.obj = nullptr;
 		}
 
-		Object *toObject() {
-			if (handler)  {
-				return handler->toObject(this);
-			}
-			return data._object;
+		Container(Object *_obj) {
+			handler = nullptr;
+			data.obj = _obj;
 		}
+
+		inline Object *toObject();
+		inline void mark();
+		inline WideString toWideStringNotation();
 	};
 
 	class Object {
@@ -89,8 +95,8 @@ namespace goat {
 
 		class Pair {
 		public:
-			Object *key;
-			Object *value;
+			Container key;
+			Container value;
 
 			Pair() : key(nullptr), value(nullptr) {
 			}
@@ -107,7 +113,7 @@ namespace goat {
 		void *list;
 		Object *prev, *next;
 		uint32 status;
-		Map<int32, Object*> objects;
+		Map<int32, Container> objects;
 		List<Pair> chain;
 		PlainVector<Object *> proto;
 		static StringIndex indexes;
@@ -166,6 +172,27 @@ namespace goat {
 		void *operator new (__size size);
 		void operator delete (void *ptr);
 	};
+
+
+	Object * Container::toObject() {
+		if (handler)  {
+			return handler->toObject(this);
+		}
+		return data.obj;
+	}
+
+	void Container::mark() {
+		if (handler == nullptr && data.obj != nullptr)
+			data.obj->mark();
+	}
+
+	WideString Container::toWideStringNotation() {
+		if (handler)  {
+			return handler->toWideStringNotation(this);
+		}
+		return data.obj->toWideStringNotation();
+	}
+
 
 	extern long long totalObjMem;
 

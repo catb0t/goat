@@ -83,10 +83,11 @@ namespace goat {
 		case GET_OBJECT:
 			return stmt->obj->createState(this);
 		case EXECUTE:
+			// TODO: review
 			if (index < vector.len()) {
 				Object::Pair pair = vector[index];
 				index++;
-				scope->replace(stmt->nameIndex, pair.key);
+				scope->replace(stmt->nameIndex, pair.key.toObject());
 				return stmt->body->createState(this);
 			}
 			else {
@@ -117,10 +118,8 @@ namespace goat {
 
 	void ForIn::StateImpl::trace() {
 		vector.forEach([](Object::Pair &pair) {
-			if (pair.key)
-				pair.key->mark();
-			if (pair.value)
-				pair.value->mark();
+			pair.key.mark();
+			pair.value.mark();
 		});
 	}
 
