@@ -195,4 +195,36 @@ namespace goat {
 		static ValueOf __this;
 		return &__this;
 	}
+
+	class CharHandler : public PrimitiveHandler {
+	public:
+		static PrimitiveHandler *getInstance() {
+			static CharHandler __this;
+			return &__this;
+		}
+
+		Object * toObject(Container *ctr) override {
+			return new ObjectChar(ctr->data.C);
+		}
+
+		bool equals(Container *left, Container *right) {
+			if (right->handler != nullptr) {
+				if (right->handler == this)
+					return left->data.C == right->data.C;
+				return false;
+			}
+			else {
+				ObjectChar *robj = right->data.obj->toObjectChar();
+				return robj && left->data.C == robj->value;
+			}
+		}
+
+		WideString toWideStringNotation(Container *ctr) override {
+			return (WideStringBuilder() << L'\'' << ctr->data.C << L'\'').toWideString();;
+		}
+	};
+
+	PrimitiveHandler * ObjectChar::getHandler() {
+		return CharHandler::getInstance();
+	}
 }

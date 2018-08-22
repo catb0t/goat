@@ -300,4 +300,45 @@ namespace goat {
 		return &__this;
 	}
 
+	class RealHandler : public PrimitiveHandler {
+	public:
+		static PrimitiveHandler *getInstance() {
+			static RealHandler __this;
+			return &__this;
+		}
+
+		Object * toObject(Container *ctr) override {
+			return new ObjectReal(ctr->data.R);
+		}
+
+		bool equals(Container *left, Container *right) {
+			if (right->handler != nullptr) {
+				if (right->handler == this)
+					return left->data.R == right->data.R;
+				if (right->handler == ObjectInteger::getHandler())
+					return left->data.R == right->data.I;
+				return false;
+			}
+			else {
+				ObjectInteger *objInt = right->data.obj->toObjectInteger();
+				if (objInt) {
+					return objInt->value == left->data.R;
+				}
+				ObjectReal *objReal = right->data.obj->toObjectReal();
+				if (objReal) {
+					return objReal->value == left->data.R;
+				}
+				return false;
+			}
+		}
+
+		WideString toWideStringNotation(Container *ctr) override {
+			return WideString::valueOf(ctr->data.R, 8, true);
+		}
+	};
+
+	PrimitiveHandler * ObjectReal::getHandler() {
+		return RealHandler::getInstance();
+	}
+
 }

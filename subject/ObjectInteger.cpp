@@ -444,4 +444,46 @@ namespace goat {
 		static ToString __this;
 		return &__this;
 	}
+
+	class IntegerHandler : public PrimitiveHandler {
+	public:
+		static PrimitiveHandler *getInstance() {
+			static IntegerHandler __this;
+			return &__this;
+		}
+
+		Object * toObject(Container *ctr) override {
+			return new ObjectInteger(ctr->data.I);
+		}
+
+		bool equals(Container *left, Container *right) {
+			if (right->handler != nullptr) {
+				if (right->handler == this)
+					return left->data.I == right->data.I;
+				if (right->handler == ObjectReal::getHandler())
+					return left->data.I == right->data.R;
+				return false;
+			}
+			else {
+				ObjectInteger *objInt = right->data.obj->toObjectInteger();
+				if (objInt) {
+					return objInt->value == left->data.I;
+				}
+				ObjectReal *objReal = right->data.obj->toObjectReal();
+				if (objReal) {
+					return objReal->value == left->data.I;
+				}
+				return false;
+			}
+		}
+
+		WideString toWideStringNotation(Container *ctr) override {
+			return WideString::valueOf(ctr->data.I);
+		}
+	};
+
+	PrimitiveHandler * ObjectInteger::getHandler() {
+		return IntegerHandler::getInstance();
+	}
+
 }

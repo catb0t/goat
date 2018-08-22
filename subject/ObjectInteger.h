@@ -37,6 +37,7 @@ namespace goat {
 		ObjectInteger * toObjectInteger() override;
 		WideString toWideString() override;
 		bool equals(Object *_obj) override;
+		static PrimitiveHandler * getHandler();
 
 		class Proto : public Object {
 		public:

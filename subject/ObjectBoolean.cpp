@@ -123,8 +123,10 @@ namespace goat {
 		}
 
 		bool equals(Container *left, Container *right) {
-			if (right->isPrimitive()) {
-				return left->data.B == right->data.B;
+			if (right->handler != nullptr) {
+				if (right->handler == this)
+					return left->data.B == right->data.B;
+				return false;
 			}
 			else {
 				ObjectBoolean *robj = right->data.obj->toObjectBoolean();
