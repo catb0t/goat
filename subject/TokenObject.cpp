@@ -99,7 +99,8 @@ namespace goat {
 			return;
 		case GET_RIGHT:
 			if (objKey) {
-				result->insert(objKey, obj);
+				Container tmp(objKey);
+				result->insert(&tmp, obj);
 			}
 			else {
 				result->insert(Object::createIndex(strKey), obj);

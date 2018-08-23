@@ -203,7 +203,8 @@ namespace goat {
 					return throw_(new IncorrectIndex());
 				}
 				{
-					left->insert(index, obj);
+					Container tmp(index);
+					left->insert(&tmp, obj);
 					State *p = prev;
 					p->ret(obj);
 					delete this;

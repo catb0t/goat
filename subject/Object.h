@@ -108,7 +108,7 @@ namespace goat {
 			Pair() : key(nullptr), value(nullptr) {
 			}
 
-			Pair(Object *_key, Object *_value) : key(_key), value(_value) {
+			Pair(Container _key, Container _value) : key(_key), value(_value) {
 			}
 		};
 
@@ -143,9 +143,9 @@ namespace goat {
 		Container *find(int32 index);
 		Container *find(WideString key);
 		Container *find(Container *key);
-		void insert(int32 index, Object *value);
-		void insert(Object *key, Object *value);
-		bool replace(int32 index, Object *repl);
+		void insert(int32 index, Container value);
+		void insert(Container *key, Container value);
+		bool replace(int32 index, Container repl);
 		void clone(Object *_clone);
 		virtual bool equals(Container *ctr);
 		bool instanceOf(Object *_obj);

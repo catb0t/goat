@@ -171,20 +171,21 @@ namespace goat {
 		return found ? found : ObjectUndefined::getContainer();
 	}
 
-	void Object::insert(int32 index, Object *value) {
+	void Object::insert(int32 index, Container value) {
 		objects.insert(index, value);
 		List<Pair>::Item *pair = chain.first;
 		while (pair) {
 			auto next = pair->next;
-			ObjectString *objStr = pair->data.key.toObject()->toObjectString();
+			ObjectString *objStr = pair->data.key.toObjectString();
 			if (objStr && objStr->value == getKey(index)) {
 				chain.remove(pair);
+				break;
 			}
 			pair = next;
 		}
 	}
 
-	void Object::insert(Object *key, Object *value) {
+	void Object::insert(Container *key, Container value) {
 		ObjectString *objStr = key->toObjectString();
 		if (objStr) {
 			objects.remove(searchIndex(objStr->value.toString()));
@@ -197,10 +198,10 @@ namespace goat {
 			}
 			pair = pair->next;
 		}
-		chain.pushBack(Pair(key, value));
+		chain.pushBack(Pair(*key, value));
 	}
 
-	bool Object::replace(int32 index, Object *repl) {
+	bool Object::replace(int32 index, Container repl) {
 		if (objects.replace(index, repl)) {
 			return true;
 		}
@@ -243,11 +244,11 @@ namespace goat {
 		});
 
 		objects.forEach([&](int32 &index, Container &container) {
-			fobj->insert(index, container.toObject());
+			fobj->insert(index, container);
 		});
 
 		chain.forEach([&](Pair pair) {
-			fobj->insert(pair.key.toObject(), pair.value.toObject());
+			fobj->insert(&pair.key, pair.value);
 		});
 	}
 
