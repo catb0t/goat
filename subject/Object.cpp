@@ -191,7 +191,7 @@ namespace goat {
 		}
 		List<Pair>::Item *pair = chain.first;
 		while (pair) {
-			if (key->equals(pair->data.key.toObject())) {
+			if (key->equals(&pair->data.key)) {
 				pair->data.value = value;
 				return;
 			}
@@ -270,23 +270,11 @@ namespace goat {
 		proto.clone(_clone->proto);
 	}
 
-	bool Object::equals(Object *_obj) {
-		return this == _obj;
-	}
-
-	bool Object::equals(Object *first, Object *second) {
-		if (first) {
-			if (second) {
-				return first->equals(second);
-			}
-			return false;    // object != undefined 
+	bool Object::equals(Container *ctr) {
+		if (ctr->isPrimitive()) {
+			return false;
 		}
-		else {
-			if (!second) {
-				return true; // undefined == undefined
-			}
-			return false;    // undefined != object
-		}
+		return this == ctr->data.obj;
 	}
 
 	bool Object::instanceOf(Object *_obj) {
@@ -633,7 +621,8 @@ namespace goat {
 		if (!operand) {
 			return new ObjectBoolean(false);
 		}
-		return new ObjectBoolean(scope->this_->equals(operand));
+		Container tmp(operand);
+		return new ObjectBoolean(scope->this_->equals(&tmp));
 	}
 
 	Object * BaseEqual::getInstance() {
@@ -653,7 +642,8 @@ namespace goat {
 		if (!operand) {
 			return new ObjectBoolean(true);
 		}
-		return new ObjectBoolean(!scope->this_->equals(operand));
+		Container tmp(operand);
+		return new ObjectBoolean(!scope->this_->equals(&tmp));
 	}
 
 	Object * BaseNotEqual::getInstance() {

@@ -67,8 +67,10 @@ namespace goat {
 		return b.toWideString();
 	}
 
-	bool ObjectString::equals(Object *_obj) {
-		ObjectString *obj = _obj->toObjectString();
+	bool ObjectString::equals(Container *ctr) {
+		if (ctr->isPrimitive())
+			return false;
+		ObjectString *obj = ctr->data.obj->toObjectString();
 		return obj && obj->value == value;
 	}
 

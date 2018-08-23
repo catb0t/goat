@@ -36,7 +36,7 @@ namespace goat {
 		ObjectInteger(lint value);
 		ObjectInteger * toObjectInteger() override;
 		WideString toWideString() override;
-		bool equals(Object *_obj) override;
+		bool equals(Container *ctr) override;
 		static PrimitiveHandler * getHandler();
 
 		class Proto : public Object {

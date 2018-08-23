@@ -50,8 +50,10 @@ namespace goat {
 		return Resource::w_void;
 	}
 
-	bool ObjectVoid::equals(Object *obj) {
-		return obj->toObjectVoid() != nullptr;
+	bool ObjectVoid::equals(Container *ctr) {
+		if (ctr->isPrimitive())
+			return false;
+		return ctr->data.obj->toObjectVoid() != nullptr;
 	}
 
 	Object *  ObjectVoid::getInstance() {

@@ -45,8 +45,13 @@ namespace goat {
 		return (WideStringBuilder() << L'\'' << value << L'\'').toWideString();
 	}
 
-	bool ObjectChar::equals(Object *_obj) {
-		ObjectChar *obj = _obj->toObjectChar();
+	bool ObjectChar::equals(Container *ctr) {
+		if (ctr->handler != nullptr) {
+			if (ctr->handler == getHandler())
+				return ctr->data.C == value;
+			return false;
+		}
+		ObjectChar *obj = ctr->data.obj->toObjectChar();
 		return obj && obj->value == value;
 	}
 

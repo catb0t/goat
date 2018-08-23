@@ -133,8 +133,9 @@ namespace goat {
 				objSwitch = obj;
 				step = COMPARE_OBJECT;
 				return;
-			case COMPARE_OBJECT:
-				if (Object::equals(objSwitch, obj)) {
+			case COMPARE_OBJECT: {
+				Container tmp(obj);
+				if (objSwitch->equals(&tmp)) {
 					tok = block->tokens->first;
 					step = EXECUTE;
 				}
@@ -151,6 +152,7 @@ namespace goat {
 					}
 				}
 				return;
+			}
 			case EXECUTE:
 				return;
 			default:

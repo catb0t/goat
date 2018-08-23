@@ -37,7 +37,7 @@ namespace goat {
 		ObjectUndefined * toObjectUndefined() override;
 		ObjectBoolean * toObjectBoolean() override;
 		WideString toWideString() override;
-		bool equals(Object *obj) override;
+		bool equals(Container *ctr) override;
 		static Object *getInstance();
 		static Container *getContainer();
 	};

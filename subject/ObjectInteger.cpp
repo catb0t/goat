@@ -42,14 +42,22 @@ namespace goat {
 		return WideString::valueOf(value);
 	}
 
-	bool ObjectInteger::equals(Object *_obj) {
-		ObjectInteger *objInt = _obj->toObjectInteger();
-		if (objInt) {
-			return objInt->value == value;
+	bool ObjectInteger::equals(Container *ctr) {
+		if (ctr->handler != nullptr) {
+			if (ctr->handler == getHandler())
+				return ctr->data.I == value;
+			if (ctr->handler == ObjectReal::getHandler())
+				return ctr->data.R == value;
 		}
-		ObjectReal *objReal = _obj->toObjectReal();
-		if (objReal) {
-			return objReal->value == value;
+		else {
+			ObjectInteger *objInt = ctr->data.obj->toObjectInteger();
+			if (objInt) {
+				return objInt->value == value;
+			}
+			ObjectReal *objReal = ctr->data.obj->toObjectReal();
+			if (objReal) {
+				return objReal->value == value;
+			}
 		}
 		return false;
 	}

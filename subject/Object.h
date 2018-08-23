@@ -147,8 +147,7 @@ namespace goat {
 		void insert(Object *key, Object *value);
 		bool replace(int32 index, Object *repl);
 		void clone(Object *_clone);
-		virtual bool equals(Object *_obj);
-		static bool equals(Object *first, Object *second);
+		virtual bool equals(Container *ctr);
 		bool instanceOf(Object *_obj);
 		void findAll(String key, PlainVector<Object *> *vector);
 		void findUnique(String key, PlainVector<Object *> *vector);
@@ -193,7 +192,7 @@ namespace goat {
 		if (handler != nullptr) {
 			return handler->equals(this, right);
 		}
-		return data.obj->equals(right->toObject());
+		return data.obj->equals(right);
 	}
 
 	Object * Container::toObject() {

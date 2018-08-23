@@ -47,8 +47,10 @@ namespace goat {
 		return Resource::w_null;
 	}
 
-	bool ObjectNull::equals(Object *obj) {
-		return obj == this || obj == ObjectVoid::getInstance();
+	bool ObjectNull::equals(Container *ctr) {
+		if (ctr->isPrimitive())
+			return false;
+		return ctr->data.obj == this || ctr->data.obj == ObjectVoid::getInstance();
 	}
 
 	Object *  ObjectNull::getInstance() {

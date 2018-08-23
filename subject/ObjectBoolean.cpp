@@ -38,9 +38,16 @@ namespace goat {
 		return value ? L"true" : L"false";
 	}
 
-	bool ObjectBoolean::equals(Object *_obj) {
-		ObjectBoolean *obj = _obj->toObjectBoolean();
-		return obj && obj->value == value;
+	bool ObjectBoolean::equals(Container *ctr) {
+		if (ctr->handler != nullptr) {
+			if (ctr->handler == getHandler())
+				return ctr->data.B == value;
+			return false;
+		}
+		else {
+			ObjectBoolean *obj = ctr->data.obj->toObjectBoolean();
+			return obj && obj->value == value;
+		}
 	}
 
 	ObjectBoolean::Proto::Proto() {
