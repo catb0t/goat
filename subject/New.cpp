@@ -91,7 +91,7 @@ namespace goat {
 						unsigned int i = 0, count = scope->arguments->vector.len();
 						Token *name = objf->function->args->first;
 						while (name && i < count) {
-							scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]);
+							scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]->toContainer());
 							i++;
 							name = name->next;
 						}
@@ -99,7 +99,7 @@ namespace goat {
 					else {
 						scope->arguments = new ObjectArray();
 					}
-					scope->objects.insert(Resource::i_arguments(), scope->arguments);
+					scope->objects.insert(Resource::i_arguments(), scope->arguments->toContainer());
 					scope->this_ = retObj;
 					scope->proto.pushBack(scope->proto[0]);
 					scope->proto[0] = retObj;

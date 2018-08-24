@@ -64,7 +64,7 @@ namespace goat {
 
 	State * Variable::StateAssignImpl::next() {
 		State *p = prev;
-		scope->replace(var->nameIndex, obj);
+		scope->replace(var->nameIndex, obj->toContainer());
 		p->ret(obj);
 		delete this;
 		return p;

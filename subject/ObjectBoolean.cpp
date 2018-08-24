@@ -53,10 +53,10 @@ namespace goat {
 	ObjectBoolean::Proto::Proto() {
 		status = PERMANENT | LOCKED;
 
-		objects.insert(createIndex("clone"), Clone::getInstance());
-		objects.insert(createIndex("!"), OperatorNot::getInstance());
-		objects.insert(createIndex("&&"), OperatorAnd::getInstance());
-		objects.insert(createIndex("||"), OperatorOr::getInstance());
+		objects.insert(createIndex("clone"), Clone::getInstance()->toContainer());
+		objects.insert(createIndex("!"), OperatorNot::getInstance()->toContainer());
+		objects.insert(createIndex("&&"), OperatorAnd::getInstance()->toContainer());
+		objects.insert(createIndex("||"), OperatorOr::getInstance()->toContainer());
 	}
 
 	Object * ObjectBoolean::Proto::getInstance() {

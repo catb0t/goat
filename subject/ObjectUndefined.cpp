@@ -59,7 +59,7 @@ namespace goat {
 	}
 
 	Container * ObjectUndefined::getContainer() {
-		static Container __container(getInstance());
+		static Container __container = getInstance()->toContainer();
 		return &__container;
 	}
 }

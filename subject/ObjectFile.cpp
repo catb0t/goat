@@ -98,13 +98,13 @@ namespace goat {
 	ObjectFile::Proto::Proto() {
 		status = PERMANENT | LOCKED;
 
-		objects.insert(createIndex("clone"), ObjFileClone::getInstance());
-		objects.insert(createIndex("read"), ObjFileRead::getInstance());
-		objects.insert(createIndex("eof"), ObjFileEof::getInstance());
-		objects.insert(createIndex("position"), ObjFilePosition::getInstance());
-		objects.insert(createIndex("seek"), ObjFileSeek::getInstance());
-		objects.insert(createIndex("Mode"), ObjFileMode::getInstance());
-		objects.insert(createIndex("Origin"), ObjFileOrigin::getInstance());
+		objects.insert(createIndex("clone"), ObjFileClone::getInstance()->toContainer());
+		objects.insert(createIndex("read"), ObjFileRead::getInstance()->toContainer());
+		objects.insert(createIndex("eof"), ObjFileEof::getInstance()->toContainer());
+		objects.insert(createIndex("position"), ObjFilePosition::getInstance()->toContainer());
+		objects.insert(createIndex("seek"), ObjFileSeek::getInstance()->toContainer());
+		objects.insert(createIndex("Mode"), ObjFileMode::getInstance()->toContainer());
+		objects.insert(createIndex("Origin"), ObjFileOrigin::getInstance()->toContainer());
 	}
 
 	Object * ObjectFile::Proto::getInstance() {
@@ -206,9 +206,9 @@ namespace goat {
 
 
 	ObjFileMode::ObjFileMode() : Object(true) {
-		objects.insert(createIndex("READ"), ObjectConstInteger<Platform::File::Mode::READ>::getInstance());
-		objects.insert(createIndex("WRITE"), ObjectConstInteger<Platform::File::Mode::WRITE>::getInstance());
-		objects.insert(createIndex("APPEND"), ObjectConstInteger<Platform::File::Mode::APPEND>::getInstance());
+		objects.insert(createIndex("READ"), ObjectConstInteger<Platform::File::Mode::READ>::getInstance()->toContainer());
+		objects.insert(createIndex("WRITE"), ObjectConstInteger<Platform::File::Mode::WRITE>::getInstance()->toContainer());
+		objects.insert(createIndex("APPEND"), ObjectConstInteger<Platform::File::Mode::APPEND>::getInstance()->toContainer());
 	}
 
 	Object *ObjFileMode::getInstance() {
@@ -218,9 +218,9 @@ namespace goat {
 
 
 	ObjFileOrigin::ObjFileOrigin() : Object(true) {
-		objects.insert(createIndex("BEGIN"), ObjectConstInteger<Platform::File::Origin::BEGIN>::getInstance());
-		objects.insert(createIndex("END"), ObjectConstInteger<Platform::File::Origin::END>::getInstance());
-		objects.insert(createIndex("CURRENT"), ObjectConstInteger<Platform::File::Origin::CURRENT>::getInstance());
+		objects.insert(createIndex("BEGIN"), ObjectConstInteger<Platform::File::Origin::BEGIN>::getInstance()->toContainer());
+		objects.insert(createIndex("END"), ObjectConstInteger<Platform::File::Origin::END>::getInstance()->toContainer());
+		objects.insert(createIndex("CURRENT"), ObjectConstInteger<Platform::File::Origin::CURRENT>::getInstance()->toContainer());
 	}
 
 	Object *ObjFileOrigin::getInstance() {

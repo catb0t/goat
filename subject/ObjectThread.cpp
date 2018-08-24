@@ -63,9 +63,9 @@ namespace goat {
 		status = PERMANENT | LOCKED;
 		proto[0] = ObjectFunction::Proto::getInstance();
 
-		objects.insert(createIndex("clone"), ObjThreadClone::getInstance());
-		objects.insert(createIndex("run"), ObjThreadRun::getInstance());
-		objects.insert(createIndex("stop"), ObjThreadStop::getInstance());
+		objects.insert(createIndex("clone"), ObjThreadClone::getInstance()->toContainer());
+		objects.insert(createIndex("run"), ObjThreadRun::getInstance()->toContainer());
+		objects.insert(createIndex("stop"), ObjThreadStop::getInstance()->toContainer());
 	}
 
 

@@ -134,7 +134,7 @@ namespace goat {
 				step = COMPARE_OBJECT;
 				return;
 			case COMPARE_OBJECT: {
-				Container tmp(obj);
+				Container tmp = obj->toContainer();
 				if (objSwitch->equals(&tmp)) {
 					tok = block->tokens->first;
 					step = EXECUTE;

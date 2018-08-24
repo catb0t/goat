@@ -99,11 +99,11 @@ namespace goat {
 			return;
 		case GET_RIGHT:
 			if (objKey) {
-				Container tmp(objKey);
-				result->insert(&tmp, obj);
+				Container tmp = objKey->toContainer();
+				result->insert(&tmp, obj->toContainer());
 			}
 			else {
-				result->insert(Object::createIndex(strKey), obj);
+				result->insert(Object::createIndex(strKey), obj->toContainer());
 			}
 			step = GET_LEFT;
 			return;

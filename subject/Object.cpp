@@ -257,7 +257,7 @@ namespace goat {
 		flat(fobj);
 
 		fobj->objects.forEach([&](int32 &index, Container &container) {
-			vector->pushBack(Pair(new ObjectString(getKey(index).toWideString()), container.toObject()));
+			vector->pushBack(Pair((new ObjectString(getKey(index).toWideString()))->toContainer(), container));
 		});
 
 		fobj->chain.forEach([&](Pair pair) {
@@ -622,7 +622,7 @@ namespace goat {
 		if (!operand) {
 			return new ObjectBoolean(false);
 		}
-		Container tmp(operand);
+		Container tmp = operand->toContainer();
 		return new ObjectBoolean(scope->this_->equals(&tmp));
 	}
 
@@ -643,7 +643,7 @@ namespace goat {
 		if (!operand) {
 			return new ObjectBoolean(true);
 		}
-		Container tmp(operand);
+		Container tmp = operand->toContainer();
 		return new ObjectBoolean(!scope->this_->equals(&tmp));
 	}
 
@@ -782,15 +782,15 @@ namespace goat {
 
 
 	SuperObject::SuperObject() : Object(true) {
-		objects.insert(createIndex("clone"), Clone::getInstance());
-		objects.insert(createIndex("flat"), Flat::getInstance());
-		objects.insert(createIndex("instanceOf"), InstanceOf::getInstance());
-		objects.insert(createIndex("->"), Inherit::getInstance());
-		objects.insert(createIndex("=="), BaseEqual::getInstance());
-		objects.insert(createIndex("!="), BaseNotEqual::getInstance());
-		objects.insert(createIndex("||"), BaseOr::getInstance());
-		objects.insert(createIndex("!"), BaseNot::getInstance());
-		objects.insert(createIndex("@"), Lock::getInstance());
+		objects.insert(createIndex("clone"), Clone::getInstance()->toContainer());
+		objects.insert(createIndex("flat"), Flat::getInstance()->toContainer());
+		objects.insert(createIndex("instanceOf"), InstanceOf::getInstance()->toContainer());
+		objects.insert(createIndex("->"), Inherit::getInstance()->toContainer());
+		objects.insert(createIndex("=="), BaseEqual::getInstance()->toContainer());
+		objects.insert(createIndex("!="), BaseNotEqual::getInstance()->toContainer());
+		objects.insert(createIndex("||"), BaseOr::getInstance()->toContainer());
+		objects.insert(createIndex("!"), BaseNot::getInstance()->toContainer());
+		objects.insert(createIndex("@"), Lock::getInstance()->toContainer());
 	}
 
 	Object * SuperObject::getInstance() {

@@ -79,9 +79,9 @@ namespace goat {
 	ObjectArray::Proto::Proto() {
 		status = PERMANENT | LOCKED;
 
-		objects.insert(createIndex("clone"), ArrayClone::getInstance());
-		objects.insert(createIndex("length"), ArrayLength::getInstance());
-		objects.insert(createIndex("push"), ArrayPush::getInstance());
+		objects.insert(createIndex("clone"), ArrayClone::getInstance()->toContainer());
+		objects.insert(createIndex("length"), ArrayLength::getInstance()->toContainer());
+		objects.insert(createIndex("push"), ArrayPush::getInstance()->toContainer());
 	}
 
 	Object * ObjectArray::Proto::getInstance() {

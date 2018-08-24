@@ -64,22 +64,22 @@ namespace goat {
 	ObjectReal::Proto::Proto() {
 		status = PERMANENT | LOCKED;
 
-		objects.insert(createIndex("clone"), Clone::getInstance());
-		objects.insert(createIndex("+"), OperatorPlus::getInstance());
-		objects.insert(createIndex("+="), OperatorPlus::getInstance());
-		objects.insert(createIndex("-"), OperatorMinus::getInstance());
-		objects.insert(createIndex("-="), OperatorMinus::getInstance());
-		objects.insert(createIndex("*"), OperatorMul::getInstance());
-		objects.insert(createIndex("*="), OperatorMul::getInstance());
-		objects.insert(createIndex("/"), OperatorDiv::getInstance());
-		objects.insert(createIndex("/="), OperatorDiv::getInstance());
-		objects.insert(createIndex("<"), OperatorLess::getInstance());
-		objects.insert(createIndex("<="), OperatorLessEqual::getInstance());
-		objects.insert(createIndex(">"), OperatorGreater::getInstance());
-		objects.insert(createIndex(">="), OperatorGreaterEqual::getInstance());
-		objects.insert(createIndex("++"), OperatorIncrement::getInstance());
-		objects.insert(createIndex("--"), OperatorDecrement::getInstance());
-		objects.insert(createIndex("!"), OperatorNot::getInstance());
+		objects.insert(createIndex("clone"), Clone::getInstance()->toContainer());
+		objects.insert(createIndex("+"), OperatorPlus::getInstance()->toContainer());
+		objects.insert(createIndex("+="), OperatorPlus::getInstance()->toContainer());
+		objects.insert(createIndex("-"), OperatorMinus::getInstance()->toContainer());
+		objects.insert(createIndex("-="), OperatorMinus::getInstance()->toContainer());
+		objects.insert(createIndex("*"), OperatorMul::getInstance()->toContainer());
+		objects.insert(createIndex("*="), OperatorMul::getInstance()->toContainer());
+		objects.insert(createIndex("/"), OperatorDiv::getInstance()->toContainer());
+		objects.insert(createIndex("/="), OperatorDiv::getInstance()->toContainer());
+		objects.insert(createIndex("<"), OperatorLess::getInstance()->toContainer());
+		objects.insert(createIndex("<="), OperatorLessEqual::getInstance()->toContainer());
+		objects.insert(createIndex(">"), OperatorGreater::getInstance()->toContainer());
+		objects.insert(createIndex(">="), OperatorGreaterEqual::getInstance()->toContainer());
+		objects.insert(createIndex("++"), OperatorIncrement::getInstance()->toContainer());
+		objects.insert(createIndex("--"), OperatorDecrement::getInstance()->toContainer());
+		objects.insert(createIndex("!"), OperatorNot::getInstance()->toContainer());
 	}
 
 	Object * ObjectReal::Proto::getInstance() {

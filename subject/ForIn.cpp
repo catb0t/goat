@@ -22,6 +22,7 @@ with Goat interpreter.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ForIn.h"
 #include "StringBuilder.h"
+#include "ObjectUndefined.h"
 
 namespace goat {
 
@@ -50,7 +51,7 @@ namespace goat {
 	ForIn::StateImpl::StateImpl(State *_prev, ForIn *_stmt) : State(_prev), stmt(_stmt), step(GET_OBJECT) {
 		if (stmt->in->declVar) {
 			cloneScope();
-			scope->objects.insert(Object::createIndex(stmt->in->name->name), nullptr);
+			scope->objects.insert(Object::createIndex(stmt->in->name->name), *ObjectUndefined::getContainer());
 		}
 		index = 0;
 	}
@@ -87,7 +88,7 @@ namespace goat {
 			if (index < vector.len()) {
 				Object::Pair pair = vector[index];
 				index++;
-				scope->replace(stmt->nameIndex, pair.key.toObject());
+				scope->replace(stmt->nameIndex, pair.key);
 				return stmt->body->createState(this);
 			}
 			else {

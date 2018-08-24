@@ -44,22 +44,22 @@ namespace goat {
 		}
 
 		initialized = true;
-		objects.insert(createIndex("NameIsNotDefined"), NameIsNotDefined::Proto::getInstance());
-		objects.insert(createIndex("OperatorIsNotDefined"), OperatorIsNotDefined::Proto::getInstance());
-		objects.insert(createIndex("IsNotAFunction"), IsNotAFunction::Proto::getInstance());
-		objects.insert(createIndex("CanNotCallUndefined"), CanNotCallUndefined::Proto::getInstance());
-		objects.insert(createIndex("CanNotCallExpression"), CanNotCallExpression::Proto::getInstance());
-		objects.insert(createIndex("CanNotReadPropertyOfUndefined"), CanNotReadPropertyOfUndefined::Proto::getInstance());
-		objects.insert(createIndex("CanNotWritePropertyOfUndefined"), CanNotWritePropertyOfUndefined::Proto::getInstance());
-		objects.insert(createIndex("CanNotWritePropertyOfLockedObject"), CanNotWritePropertyOfLockedObject::Proto::getInstance());
-		objects.insert(createIndex("CanNotReadOperatorOfUndefined"), CanNotReadOperatorOfUndefined::Proto::getInstance());
-		objects.insert(createIndex("DivisionByZero"), DivisionByZero::Proto::getInstance());
-		objects.insert(createIndex("IncorrectIndex"), IncorrectIndex::Proto::getInstance());
-		objects.insert(createIndex("OutOfBounds"), OutOfBounds::Proto::getInstance());
-		objects.insert(createIndex("IllegalArgument"), IllegalArgument::Proto::getInstance());
-		objects.insert(createIndex("NotImplemented"), NotImplemented::Proto::getInstance());
-		objects.insert(createIndex("InvalidOperation"), InvalidOperation::Proto::getInstance());
-		objects.insert(createIndex("PrototypeIsNotDefined"), PrototypeIsNotDefined::Proto::getInstance());
+		objects.insert(createIndex("NameIsNotDefined"), NameIsNotDefined::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("OperatorIsNotDefined"), OperatorIsNotDefined::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("IsNotAFunction"), IsNotAFunction::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("CanNotCallUndefined"), CanNotCallUndefined::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("CanNotCallExpression"), CanNotCallExpression::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("CanNotReadPropertyOfUndefined"), CanNotReadPropertyOfUndefined::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("CanNotWritePropertyOfUndefined"), CanNotWritePropertyOfUndefined::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("CanNotWritePropertyOfLockedObject"), CanNotWritePropertyOfLockedObject::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("CanNotReadOperatorOfUndefined"), CanNotReadOperatorOfUndefined::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("DivisionByZero"), DivisionByZero::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("IncorrectIndex"), IncorrectIndex::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("OutOfBounds"), OutOfBounds::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("IllegalArgument"), IllegalArgument::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("NotImplemented"), NotImplemented::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("InvalidOperation"), InvalidOperation::Proto::getInstance()->toContainer());
+		objects.insert(createIndex("PrototypeIsNotDefined"), PrototypeIsNotDefined::Proto::getInstance()->toContainer());
 	}
 
 	Object * ObjectException::Proto::getInstance() {

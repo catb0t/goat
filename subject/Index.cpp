@@ -113,7 +113,7 @@ namespace goat {
 				{
 					State *p = prev;
 					// TODO: review
-					Container tmp(index);
+					Container tmp = index->toContainer();
 					p->ret(left->find(&tmp)->toObject());
 					delete this;
 					return p;
@@ -203,8 +203,8 @@ namespace goat {
 					return throw_(new IncorrectIndex());
 				}
 				{
-					Container tmp(index);
-					left->insert(&tmp, obj);
+					Container tmp = index->toContainer();
+					left->insert(&tmp, obj->toContainer());
 					State *p = prev;
 					p->ret(obj);
 					delete this;

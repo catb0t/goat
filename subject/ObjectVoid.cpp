@@ -28,8 +28,8 @@ with Goat interpreter.  If not, see <http://www.gnu.org/licenses/>.
 namespace goat {
 
 	ObjectVoid::ObjectVoid() : Object(true) {
-		objects.insert(createIndex("!"), OperatorNot::getInstance());
-		objects.insert(createIndex("||"), OperatorOr::getInstance());
+		objects.insert(createIndex("!"), OperatorNot::getInstance()->toContainer());
+		objects.insert(createIndex("||"), OperatorOr::getInstance()->toContainer());
 
 		proto.pushBack(SuperObject::getInstance());
 	}

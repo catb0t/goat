@@ -77,16 +77,6 @@ namespace goat {
 			ldouble R;
 		} data;
 
-		Container() {
-			handler = nullptr;
-			data.obj = nullptr;
-		}
-
-		Container(Object *_obj) {
-			handler = nullptr;
-			data.obj = _obj;
-		}
-
 		inline bool isPrimitive();
 		inline bool isUndefined();
 		inline bool equals(Container *right);
@@ -100,12 +90,26 @@ namespace goat {
 	class Object {
 	public:
 
+		static Container toContainer(Object *obj) {
+			Container ctr;
+			ctr.handler = nullptr;
+			ctr.data.obj = obj;
+			return ctr;
+		}
+
+		Container toContainer() {
+			Container ctr;
+			ctr.handler = nullptr;
+			ctr.data.obj = this;
+			return ctr;
+		}
+
 		class Pair {
 		public:
 			Container key;
 			Container value;
 
-			Pair() : key(nullptr), value(nullptr) {
+			Pair() : key(Object::toContainer(nullptr)), value(Object::toContainer(nullptr)) {
 			}
 
 			Pair(Container _key, Container _value) : key(_key), value(_value) {

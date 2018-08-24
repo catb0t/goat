@@ -42,10 +42,10 @@ namespace goat {
 	ObjectStringBuilder::Proto::Proto() {
 		status = PERMANENT | LOCKED;
 
-		objects.insert(createIndex("clone"), Clone::getInstance());
-		objects.insert(createIndex("toString"), ToString::getInstance());
-		objects.insert(createIndex("<<"), Append::getInstance());
-		objects.insert(createIndex("append"), Append::getInstance());
+		objects.insert(createIndex("clone"), Clone::getInstance()->toContainer());
+		objects.insert(createIndex("toString"), ToString::getInstance()->toContainer());
+		objects.insert(createIndex("<<"), Append::getInstance()->toContainer());
+		objects.insert(createIndex("append"), Append::getInstance()->toContainer());
 	}
 
 	Object * ObjectStringBuilder::Proto::getInstance() {

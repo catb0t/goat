@@ -122,7 +122,7 @@ namespace goat {
 				changeScope(of->context->clone());
 				scope->arguments = arguments;
 				scope->this_ = thisObj;
-				scope->objects.insert(Resource::i_arguments(), scope->arguments);
+				scope->objects.insert(Resource::i_arguments(), scope->arguments->toContainer());
 				if (fcall->method) {
 					scope->proto.pushBack(scope->proto[0]);
 					scope->proto[0] = thisObj;
@@ -131,7 +131,8 @@ namespace goat {
 					unsigned int i = 0, count = scope->arguments->vector.len();
 					Token *name = of->function->args->first;
 					while (name) {
-						scope->objects.insert(Object::createIndex(name->toIdentifier()->name), i < count ? scope->arguments->vector[i] : nullptr);
+						scope->objects.insert(Object::createIndex(name->toIdentifier()->name),
+							i < count ? scope->arguments->vector[i]->toContainer() : *ObjectUndefined::getContainer());
 						i++;
 						name = name->next;
 					}
