@@ -22,6 +22,7 @@ with Goat interpreter.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DeclareVariable.h"
 #include "StringBuilder.h"
+#include "ObjectUndefined.h"
 
 namespace goat {
 
@@ -50,7 +51,7 @@ namespace goat {
 			return decl->init->createState(this);
 		}
 		else {
-			scope->objects.insert(Object::createIndex(decl->name), init->toContainer());
+			scope->objects.insert(Object::createIndex(decl->name), init ? init->toContainer() : *ObjectUndefined::getContainer());
 			State *p = prev;
 			delete this;
 			return p;

@@ -112,7 +112,7 @@ namespace goat {
 					t = new ObjectArray();
 					obj->insert(Resource::i_trace(), t->toContainer());
 				}
-				t->vector.pushBack(new ObjectString(l->toString().toWideString()));
+				t->vector.pushBack((new ObjectString(l->toString().toWideString()))->toContainer());
 			}
 		}
 		if (prev) {

@@ -112,8 +112,7 @@ namespace goat {
 
 		ObjectArray * args = scope->arguments;
 		if (args->vector.len() > 0) {
-			Object *arg0 = args->vector[0];
-			WideString value = arg0 ? arg0->toWideString() : L"undefined";
+			WideString value = args->vector[0].toWideString();
 
 			value.forEach([&](wchar ch) {
 				out->write(ch);
@@ -130,11 +129,11 @@ namespace goat {
 
 	Object * Open::run(Scope *scope) {
 		ObjectArray * args = scope->arguments;
-		if (args->vector.len() == 2) {
-			ObjectString *fname = args->vector[0]->toObjectString();
-			ObjectInteger *mode = args->vector[1]->toObjectInteger();
-			if (fname && mode) {
-				Platform::File *file = Platform::File::open(fname->value.toString(), (Platform::File::Mode)mode->value);
+		if (args->vector.len() >= 2) {
+			WideString fname;
+			lint mode;
+			if (args->vector[0].getString(&fname) && args->vector[1].getInteger(&mode)) {
+				Platform::File *file = Platform::File::open(fname.toString(), (Platform::File::Mode)mode);
 				if (!file) {
 					return nullptr;
 				}
@@ -156,8 +155,7 @@ namespace goat {
 	Object * Defined::run(Scope *scope) {
 		ObjectArray * args = scope->arguments;
 		if (args->vector.len() > 0) {
-			Object *obj = args->vector[0];
-			return new ObjectBoolean(obj != nullptr && obj->toObjectUndefined() == nullptr);
+			return new ObjectBoolean(!args->vector[0].isUndefined());
 		}
 		return new IllegalArgument();
 	}
@@ -171,9 +169,17 @@ namespace goat {
 	Object * IsNumber::run(Scope *scope) {
 		ObjectArray * args = scope->arguments;
 		if (args->vector.len() > 0) {
-			Object *obj = args->vector[0];
-			return new ObjectBoolean(obj != nullptr &&
-				(obj->toObjectInteger() != nullptr || obj->toObjectReal() != nullptr));
+			Container ctr = args->vector[0];
+			bool result = false;
+			if (ctr.handler != nullptr) {
+				if (ctr.handler == ObjectInteger::getHandler() || ctr.handler == ObjectReal::getHandler())
+					result = true;
+			}
+			else {
+				if (ctr.data.obj->toObjectInteger() != nullptr || ctr.data.obj->toObjectReal() != nullptr)
+					result = true;
+			}
+			return new ObjectBoolean(result);
 		}
 		return new IllegalArgument();
 	}

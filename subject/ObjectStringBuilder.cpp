@@ -85,21 +85,21 @@ namespace goat {
 		if (argsCount == 0) {
 			return new IllegalArgument();
 		}
-		Object *operand = scope->arguments->vector[0];
-		if (!operand) {
-			return new IllegalArgument();
-		}
-		WideString wstr = operand->toWideString();
+		WideString wstr = scope->arguments->vector[0].toWideString();
 		if (argsCount == 1) {
 			this_->builder << wstr;
 		}
 		else {
-			ObjectInteger *objRepeat = scope->arguments->vector[1]->toObjectInteger();
-			if (objRepeat && objRepeat->value >= 0) {
-				unsigned int repeat = (unsigned int)objRepeat->value;
-				this_->builder.reserve(wstr.len() * repeat);
-				for (unsigned int i = 0; i < repeat; i++) {
-					this_->builder << wstr;
+			lint lrepeat;
+			if (scope->arguments->vector[1].getInteger(&lrepeat)) {
+				if (lrepeat > uint32max)
+					return new IllegalArgument();
+				if (lrepeat > 0) {
+					uint32 repeat = (uint32)lrepeat;
+					this_->builder.reserve(wstr.len() * repeat);
+					for (uint32 i = 0; i < repeat; i++) {
+						this_->builder << wstr;
+					}
 				}
 			}
 			else {

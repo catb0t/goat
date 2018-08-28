@@ -63,7 +63,10 @@ namespace goat {
 
 		virtual Object * toObject(Container *ctr) = 0;
 		virtual bool equals(Container *left, Container *right) = 0;
-		virtual WideString toWideStringNotation(Container *ctr) = 0;
+		virtual WideString toWideString(Container *ctr) = 0;
+		virtual WideString toWideStringNotation(Container *ctr) {
+			return toWideString(ctr);
+		}
 	};
 
 	class Container {
@@ -84,7 +87,13 @@ namespace goat {
 		inline ObjectArray *toObjectArray();
 		inline ObjectString *toObjectString();
 		inline void mark();
+		inline WideString toWideString();
 		inline WideString toWideStringNotation();
+		bool getBoolean(bool *value);
+		bool getChar(wchar *value);
+		bool getInteger(lint *value);
+		bool getReal(ldouble *value);
+		bool getString(WideString *value);
 	};
 
 	class Object {
@@ -201,7 +210,8 @@ namespace goat {
 
 	Object * Container::toObject() {
 		if (handler)  {
-			return handler->toObject(this);
+			data.obj = handler->toObject(this);
+			handler = nullptr;
 		}
 		return data.obj;
 	}
@@ -217,6 +227,13 @@ namespace goat {
 	void Container::mark() {
 		if (handler == nullptr && data.obj != nullptr)
 			data.obj->mark();
+	}
+
+	WideString Container::toWideString() {
+		if (handler)  {
+			return handler->toWideString(this);
+		}
+		return data.obj->toWideString();
 	}
 
 	WideString Container::toWideStringNotation() {

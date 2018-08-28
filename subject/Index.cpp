@@ -72,7 +72,7 @@ namespace goat {
 					if (intIdx->value < 0 || intIdx->value >= objArr->vector.len()) {
 						return throw_(new OutOfBounds());
 					}
-					Object *value = objArr->vector[(unsigned int)intIdx->value];
+					Object *value = objArr->vector[(unsigned int)intIdx->value].toObject();
 					State *p = prev;
 					p->ret(value);
 					delete this;
@@ -172,7 +172,7 @@ namespace goat {
 					if (intIdx->value < 0 || intIdx->value >= objArr->vector.len()) {
 						return throw_(new OutOfBounds());
 					}
-					objArr->vector[(unsigned int)intIdx->value] = obj;
+					objArr->vector[(unsigned int)intIdx->value] = obj->toContainer();
 					State *p = prev;
 					p->ret(obj);
 					delete this;

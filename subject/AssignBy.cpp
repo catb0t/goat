@@ -76,7 +76,7 @@ namespace goat {
 					changeScope(of->context->clone());
 					scope->this_ = left;
 					scope->arguments = new ObjectArray();
-					scope->arguments->vector.pushBack(right);
+					scope->arguments->vector.pushBack(right->toContainer());
 					scope->objects.insert(Resource::i_arguments(), scope->arguments->toContainer());
 					scope->proto.pushBack(scope->proto[0]);
 					scope->proto[0] = left;
@@ -84,7 +84,7 @@ namespace goat {
 						unsigned int i = 0, count = scope->arguments->vector.len();
 						Token *name = of->function->args->first;
 						while (name && i < count) {
-							scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]->toContainer());
+							scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]);
 							i++;
 							name = name->next;
 						}
@@ -96,7 +96,7 @@ namespace goat {
 					cloneScope();
 					scope->this_ = left;
 					scope->arguments = new ObjectArray();
-					scope->arguments->vector.pushBack(right);
+					scope->arguments->vector.pushBack(right->toContainer());
 					return obi->createState(this);
 				}
 			}

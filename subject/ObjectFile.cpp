@@ -128,12 +128,12 @@ namespace goat {
 		ObjectArray * args = scope->arguments;
 		unsigned int argsCount = args->vector.len();
 		if (argsCount == 1) {
-			ObjectInteger *count = args->vector[0]->toObjectInteger();
-			if (count && count->value >= 0) {
+			lint count;
+			if (args->vector[0].getInteger(&count) && count >= 0) {
 				ObjectByteArray *result = new ObjectByteArray();
-				if (count->value > 0) {
-					unsigned char *buff = new unsigned char[count->value];
-					long int fact = this_->file->read(buff, (long int)count->value);
+				if (count > 0) {
+					unsigned char *buff = new unsigned char[count];
+					long int fact = this_->file->read(buff, (long int)count);
 					result->vector.pushBack(buff, fact);
 					delete[] buff;
 				}
@@ -178,17 +178,16 @@ namespace goat {
 		ObjectFile *this_ = scope->this_->toObjectFile();
 		ObjectArray * args = scope->arguments;
 		if (args->vector.len() == 2) {
-			ObjectInteger *offset = args->vector[0]->toObjectInteger();
-			ObjectInteger *origin = args->vector[1]->toObjectInteger();
-			if (offset && origin) {
-				switch (origin->value) {
+			lint offset, origin;
+			if (args->vector[0].getInteger(&offset) && args->vector[1].getInteger(&origin)) {
+				switch (origin) {
 					case Platform::File::Origin::BEGIN:
 					case Platform::File::Origin::END:
 					case Platform::File::Origin::CURRENT:
 						return new ObjectInteger(
 							this_->file->seek(
-								(long int)offset->value,
-								(Platform::File::Origin)origin->value
+								(long int)offset,
+								(Platform::File::Origin)origin
 							)
 						);
 					default:

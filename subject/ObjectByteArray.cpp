@@ -120,11 +120,11 @@ namespace goat {
 		ObjectByteArray *this_ = scope->this_->toObjectByteArray();
 		unsigned int i, l = scope->arguments->vector.len();
 		for (i = 0; i < l; i++) {
-			ObjectInteger *obj = scope->arguments->vector[i]->toObjectInteger();
-			if (!obj || obj->value < 0 || obj->value > 255) {
+			lint value;
+			if (!scope->arguments->vector[i].getInteger(&value) || value < 0 || value > 255) {
 				return new IllegalArgument();
 			}
-			this_->vector.pushBack((unsigned char)obj->value);
+			this_->vector.pushBack((unsigned char)value);
 		}
 		return nullptr;
 	}

@@ -445,6 +445,86 @@ namespace goat {
 		return objPool.free(ptr);
 	}
 
+
+	bool Container::getBoolean(bool *value) {
+		if (handler != nullptr) {
+			if (handler == ObjectBoolean::getHandler()) {
+				*value = data.B;
+				return true;
+			}
+		}
+		else {
+			ObjectBoolean *obj = data.obj->toObjectBoolean();
+			if (obj) {
+				*value = obj->value;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool Container::getChar(wchar *value) {
+		if (handler != nullptr) {
+			if (handler == ObjectChar::getHandler()) {
+				*value = data.C;
+				return true;
+			}
+		}
+		else {
+			ObjectChar *obj = data.obj->toObjectChar();
+			if (obj) {
+				*value = obj->value;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool Container::getInteger(lint *value) {
+		if (handler != nullptr) {
+			if (handler == ObjectInteger::getHandler()) {
+				*value = data.I;
+				return true;
+			}
+		}
+		else {
+			ObjectInteger *obj = data.obj->toObjectInteger();
+			if (obj) {
+				*value = obj->value;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool Container::getReal(ldouble *value) {
+		if (handler != nullptr) {
+			if (handler == ObjectReal::getHandler()) {
+				*value = data.R;
+				return true;
+			}
+		}
+		else {
+			ObjectReal *obj = data.obj->toObjectReal();
+			if (obj) {
+				*value = obj->value;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool Container::getString(WideString *value) {
+		if (handler == nullptr) {
+			ObjectString *obj = data.obj->toObjectString();
+			if (obj) {
+				*value = obj->value;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	//////
 
 	class Clone : public ObjectBuiltIn {
@@ -474,7 +554,7 @@ namespace goat {
 	Object * InstanceOf::run(Scope *scope) {
 		bool result = false;
 		if (scope->arguments->vector.len() > 0) {
-			Object *operand = scope->arguments->vector[0];
+			Object *operand = scope->arguments->vector[0].toObject();
 			result = scope->this_->instanceOf(operand);
 		}
 		return new ObjectBoolean(result);
@@ -533,7 +613,7 @@ namespace goat {
 		case CLONE: {
 			step = DONE;
 			proto = scope->this_;
-			Object *blank = scope->arguments->vector[0];
+			Object *blank = scope->arguments->vector[0].toObject();
 			Container *ctrClone = blank->find(Resource::i_clone());
 			if (ctrClone->isPrimitive()) {
 				// TODO: implement
@@ -563,7 +643,9 @@ namespace goat {
 			ObjectArray *multi = proto->toObjectArray();
 			if (multi) {
 				cloned->proto.clean();
-				multi->vector.clone(cloned->proto);
+				multi->vector.forEach([&](Container &ctr) {
+					cloned->proto.pushBack(ctr.toObject());
+				});
 			}
 			else {
 				cloned->proto[0] = proto;
@@ -618,12 +700,7 @@ namespace goat {
 	};
 
 	Object * BaseEqual::run(Scope *scope) {
-		Object *operand = scope->arguments->vector[0];
-		if (!operand) {
-			return new ObjectBoolean(false);
-		}
-		Container tmp = operand->toContainer();
-		return new ObjectBoolean(scope->this_->equals(&tmp));
+		return new ObjectBoolean(scope->this_->equals(&scope->arguments->vector[0]));
 	}
 
 	Object * BaseEqual::getInstance() {
@@ -639,12 +716,7 @@ namespace goat {
 	};
 
 	Object * BaseNotEqual::run(Scope *scope) {
-		Object *operand = scope->arguments->vector[0];
-		if (!operand) {
-			return new ObjectBoolean(true);
-		}
-		Container tmp = operand->toContainer();
-		return new ObjectBoolean(!scope->this_->equals(&tmp));
+		return new ObjectBoolean(!scope->this_->equals(&scope->arguments->vector[0]));
 	}
 
 	Object * BaseNotEqual::getInstance() {

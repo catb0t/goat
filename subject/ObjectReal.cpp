@@ -90,16 +90,16 @@ namespace goat {
 	Object * ObjectReal::Proto::OperatorPlus::run(Scope *scope) {
 		ObjectReal *this_ = scope->this_->toObjectReal();
 		if (scope->arguments && scope->arguments->vector.len() > 0) {
-			Object *arg = scope->arguments->vector[0];
-			ObjectInteger *operInt = arg->toObjectInteger();
-			if (operInt) {
-				return new ObjectReal(this_->value + ((ldouble)operInt->value));
+			Container &operand = scope->arguments->vector[0];
+			lint operInteger;
+			if (operand.getInteger(&operInteger)) {
+				return new ObjectReal(this_->value + (ldouble)operInteger);
 			}
-			ObjectReal *operand = arg->toObjectReal();
-			if (!operand) {
-				return new IllegalArgument();
+			ldouble operReal;
+			if (operand.getReal(&operReal)) {
+				return new ObjectReal(this_->value + operReal);
 			}
-			return new ObjectReal(this_->value + operand->value);
+			return new IllegalArgument();
 		}
 		else {
 			return new ObjectReal(this_->value);
@@ -115,16 +115,16 @@ namespace goat {
 	Object * ObjectReal::Proto::OperatorMinus::run(Scope *scope) {
 		ObjectReal *this_ = scope->this_->toObjectReal();
 		if (scope->arguments && scope->arguments->vector.len() > 0) {
-			Object *arg = scope->arguments->vector[0];
-			ObjectInteger *operInt = arg->toObjectInteger();
-			if (operInt) {
-				return new ObjectReal(this_->value - ((ldouble)operInt->value));
+			Container &operand = scope->arguments->vector[0];
+			lint operInteger;
+			if (operand.getInteger(&operInteger)) {
+				return new ObjectReal(this_->value - (ldouble)operInteger);
 			}
-			ObjectReal *operand = arg->toObjectReal();
-			if (!operand) {
-				return new IllegalArgument();
+			ldouble operReal;
+			if (operand.getReal(&operReal)) {
+				return new ObjectReal(this_->value - operReal);
 			}
-			return new ObjectReal(this_->value - operand->value);
+			return new IllegalArgument();
 		}
 		else {
 			return new ObjectReal(-this_->value);
@@ -139,16 +139,16 @@ namespace goat {
 
 	Object * ObjectReal::Proto::OperatorMul::run(Scope *scope) {
 		ObjectReal *this_ = scope->this_->toObjectReal();
-		Object *arg = scope->arguments->vector[0];
-		ObjectInteger *operInt = arg->toObjectInteger();
-		if (operInt) {
-			return new ObjectReal(this_->value * ((ldouble)operInt->value));
+		Container &operand = scope->arguments->vector[0];
+		lint operInteger;
+		if (operand.getInteger(&operInteger)) {
+			return new ObjectReal(this_->value * (ldouble)operInteger);
 		}
-		ObjectReal *operand = arg->toObjectReal();
-		if (!operand) {
-			return new IllegalArgument();
+		ldouble operReal;
+		if (operand.getReal(&operReal)) {
+			return new ObjectReal(this_->value * operReal);
 		}
-		return new ObjectReal(this_->value * operand->value);
+		return new IllegalArgument();
 	}
 
 	Object * ObjectReal::Proto::OperatorMul::getInstance() {
@@ -159,22 +159,20 @@ namespace goat {
 
 	Object * ObjectReal::Proto::OperatorDiv::run(Scope *scope) {
 		ObjectReal *this_ = scope->this_->toObjectReal();
-		Object *arg = scope->arguments->vector[0];
-		ObjectInteger *operInt = arg->toObjectInteger();
-		if (operInt) {
-			if (operInt->value == 0) {
+		Container &operand = scope->arguments->vector[0];
+		lint operInteger;
+		if (operand.getInteger(&operInteger)) {
+			if (operInteger == 0)
 				return new DivisionByZero();
-			}
-			return new ObjectReal(this_->value / ((ldouble)operInt->value));
+			return new ObjectReal(this_->value / (ldouble)operInteger);
 		}
-		ObjectReal *operand = arg->toObjectReal();
-		if (!operand) {
-			return new IllegalArgument();
+		ldouble operReal;
+		if (operand.getReal(&operReal)) {
+			if (operReal == 0)
+				return new DivisionByZero();
+			return new ObjectReal(this_->value / operReal);
 		}
-		if (operand->value == 0) {
-			return new DivisionByZero();
-		}
-		return new ObjectReal(this_->value / operand->value);
+		return new IllegalArgument();
 	}
 
 	Object * ObjectReal::Proto::OperatorDiv::getInstance() {
@@ -185,16 +183,16 @@ namespace goat {
 
 	Object * ObjectReal::Proto::OperatorLess::run(Scope *scope) {
 		ObjectReal *this_ = scope->this_->toObjectReal();
-		Object *arg = scope->arguments->vector[0];
-		ObjectInteger *operInt = arg->toObjectInteger();
-		if (operInt) {
-			return new ObjectBoolean(this_->value < ((ldouble)operInt->value));
+		Container &operand = scope->arguments->vector[0];
+		lint operInteger;
+		if (operand.getInteger(&operInteger)) {
+			return new ObjectBoolean(this_->value < (ldouble)operInteger);
 		}
-		ObjectReal *operand = arg->toObjectReal();
-		if (!operand) {
-			return new IllegalArgument();
+		ldouble operReal;
+		if (operand.getReal(&operReal)) {
+			return new ObjectBoolean(this_->value < operReal);
 		}
-		return new ObjectBoolean(this_->value < operand->value);
+		return new IllegalArgument();
 	}
 
 	Object * ObjectReal::Proto::OperatorLess::getInstance() {
@@ -205,16 +203,16 @@ namespace goat {
 
 	Object * ObjectReal::Proto::OperatorLessEqual::run(Scope *scope) {
 		ObjectReal *this_ = scope->this_->toObjectReal();
-		Object *arg = scope->arguments->vector[0];
-		ObjectInteger *operInt = arg->toObjectInteger();
-		if (operInt) {
-			return new ObjectBoolean(this_->value <= ((ldouble)operInt->value));
+		Container &operand = scope->arguments->vector[0];
+		lint operInteger;
+		if (operand.getInteger(&operInteger)) {
+			return new ObjectBoolean(this_->value <= (ldouble)operInteger);
 		}
-		ObjectReal *operand = arg->toObjectReal();
-		if (!operand) {
-			return new IllegalArgument();
+		ldouble operReal;
+		if (operand.getReal(&operReal)) {
+			return new ObjectBoolean(this_->value <= operReal);
 		}
-		return new ObjectBoolean(this_->value <= operand->value);
+		return new IllegalArgument();
 	}
 
 	Object * ObjectReal::Proto::OperatorLessEqual::getInstance() {
@@ -225,16 +223,16 @@ namespace goat {
 
 	Object * ObjectReal::Proto::OperatorGreater::run(Scope *scope) {
 		ObjectReal *this_ = scope->this_->toObjectReal();
-		Object *arg = scope->arguments->vector[0];
-		ObjectInteger *operInt = arg->toObjectInteger();
-		if (operInt) {
-			return new ObjectBoolean(this_->value > ((ldouble)operInt->value));
+		Container &operand = scope->arguments->vector[0];
+		lint operInteger;
+		if (operand.getInteger(&operInteger)) {
+			return new ObjectBoolean(this_->value > (ldouble)operInteger);
 		}
-		ObjectReal *operand = arg->toObjectReal();
-		if (!operand) {
-			return new IllegalArgument();
+		ldouble operReal;
+		if (operand.getReal(&operReal)) {
+			return new ObjectBoolean(this_->value > operReal);
 		}
-		return new ObjectBoolean(this_->value > operand->value);
+		return new IllegalArgument();
 	}
 
 	Object * ObjectReal::Proto::OperatorGreater::getInstance() {
@@ -245,16 +243,16 @@ namespace goat {
 
 	Object * ObjectReal::Proto::OperatorGreaterEqual::run(Scope *scope) {
 		ObjectReal *this_ = scope->this_->toObjectReal();
-		Object *arg = scope->arguments->vector[0];
-		ObjectInteger *operInt = arg->toObjectInteger();
-		if (operInt) {
-			return new ObjectBoolean(this_->value >= ((ldouble)operInt->value));
+		Container &operand = scope->arguments->vector[0];
+		lint operInteger;
+		if (operand.getInteger(&operInteger)) {
+			return new ObjectBoolean(this_->value >= (ldouble)operInteger);
 		}
-		ObjectReal *operand = arg->toObjectReal();
-		if (!operand) {
-			return new IllegalArgument();
+		ldouble operReal;
+		if (operand.getReal(&operReal)) {
+			return new ObjectBoolean(this_->value >= operReal);
 		}
-		return new ObjectBoolean(this_->value >= operand->value);
+		return new IllegalArgument();
 	}
 
 	Object * ObjectReal::Proto::OperatorGreaterEqual::getInstance() {
@@ -340,7 +338,7 @@ namespace goat {
 			}
 		}
 
-		WideString toWideStringNotation(Container *ctr) override {
+		WideString toWideString(Container *ctr) override {
 			return WideString::valueOf(ctr->data.R, 8, true);
 		}
 	};

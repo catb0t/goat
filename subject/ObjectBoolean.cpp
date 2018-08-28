@@ -91,11 +91,11 @@ namespace goat {
 
 	Object * ObjectBoolean::Proto::OperatorAnd::run(Scope *scope) {
 		ObjectBoolean *this_ = scope->this_->toObjectBoolean();
-		ObjectBoolean *operand = scope->arguments->vector[0]->toObjectBoolean();
-		if (!operand) {
+		bool operand;
+		if (!scope->arguments->vector[0].getBoolean(&operand)) {
 			return new IllegalArgument();
 		}
-		return new ObjectBoolean(this_->value && operand->value);
+		return new ObjectBoolean(this_->value && operand);
 	}
 
 	Object * ObjectBoolean::Proto::OperatorAnd::getInstance() {
@@ -106,11 +106,11 @@ namespace goat {
 
 	Object * ObjectBoolean::Proto::OperatorOr::run(Scope *scope) {
 		ObjectBoolean *this_ = scope->this_->toObjectBoolean();
-		ObjectBoolean *operand = scope->arguments->vector[0]->toObjectBoolean();
-		if (!operand) {
+		bool operand;
+		if (!scope->arguments->vector[0].getBoolean(&operand)) {
 			return new IllegalArgument();
 		}
-		return new ObjectBoolean(this_->value || operand->value);
+		return new ObjectBoolean(this_->value || operand);
 	}
 
 	Object * ObjectBoolean::Proto::OperatorOr::getInstance() {
@@ -141,7 +141,7 @@ namespace goat {
 			}
 		}
 
-		WideString toWideStringNotation(Container *ctr) override {
+		WideString toWideString(Container *ctr) override {
 			return ctr->data.B ? L"true" : L"false";
 		}
 	};

@@ -132,7 +132,7 @@ namespace goat {
 					Token *name = of->function->args->first;
 					while (name) {
 						scope->objects.insert(Object::createIndex(name->toIdentifier()->name),
-							i < count ? scope->arguments->vector[i]->toContainer() : *ObjectUndefined::getContainer());
+							i < count ? scope->arguments->vector[i] : *ObjectUndefined::getContainer());
 						i++;
 						name = name->next;
 					}
@@ -156,7 +156,7 @@ namespace goat {
 		}
 		case DONE: {
 			State *p = prev;
-			p->ret(retObj);
+			p->ret(retObj ? retObj : ObjectUndefined::getInstance());
 			delete this;
 			return p;
 		}
@@ -172,7 +172,7 @@ namespace goat {
 			step = GET_ARGUMENTS;
 			return;
 		case GET_ARGUMENTS:
-			arguments->vector.pushBack(obj);
+			arguments->vector.pushBack(obj->toContainer());
 			return;
 		case DONE:
 			retObj = obj;

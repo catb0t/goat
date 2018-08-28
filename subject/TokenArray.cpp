@@ -70,7 +70,7 @@ namespace goat {
 	}
 
 	void TokenArray::StateImpl::ret(Object *obj) {
-		result->vector.pushBack(obj);
+		result->vector.pushBack(obj->toContainer());
 	}
 
 	void TokenArray::StateImpl::trace() {

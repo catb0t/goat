@@ -29,7 +29,7 @@ namespace goat {
 
 	class ObjectArray : public Object {
 	public:
-		PlainVector<Object *> vector;
+		PlainVector<Container> vector;
 
 		ObjectArray();
 		ObjectArray * toObjectArray() override;

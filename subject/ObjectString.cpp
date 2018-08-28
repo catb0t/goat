@@ -99,12 +99,7 @@ namespace goat {
 
 	Object * ObjectString::Proto::OperatorPlus::run(Scope *scope) {
 		ObjectString *this_ = scope->this_->toObjectString();
-		Object *arg = scope->arguments->vector[0];
-		if (arg) {
-			return new ObjectString(this_->value + arg->toWideString());
-		}
-		// exception
-		return nullptr;
+		return new ObjectString(this_->value + scope->arguments->vector[0].toWideString());
 	}
 
 	Object * ObjectString::Proto::OperatorPlus::getInstance() {
@@ -115,11 +110,11 @@ namespace goat {
 
 	Object * ObjectString::Proto::OperatorLess::run(Scope *scope) {
 		ObjectString *this_ = scope->this_->toObjectString();
-		ObjectString *operand = scope->arguments->vector[0]->toObjectString();
-		if (!operand) {
+		WideString operand;
+		if (!scope->arguments->vector[0].getString(&operand)) {
 			return new IllegalArgument();
 		}
-		return new ObjectBoolean(this_->value < operand->value);
+		return new ObjectBoolean(this_->value < operand);
 	}
 
 	Object * ObjectString::Proto::OperatorLess::getInstance() {
@@ -130,11 +125,11 @@ namespace goat {
 
 	Object * ObjectString::Proto::OperatorLessEqual::run(Scope *scope) {
 		ObjectString *this_ = scope->this_->toObjectString();
-		ObjectString *operand = scope->arguments->vector[0]->toObjectString();
-		if (!operand) {
+		WideString operand;
+		if (!scope->arguments->vector[0].getString(&operand)) {
 			return new IllegalArgument();
 		}
-		return new ObjectBoolean(this_->value <= operand->value);
+		return new ObjectBoolean(this_->value <= operand);
 	}
 
 	Object * ObjectString::Proto::OperatorLessEqual::getInstance() {
@@ -145,11 +140,11 @@ namespace goat {
 
 	Object * ObjectString::Proto::OperatorGreater::run(Scope *scope) {
 		ObjectString *this_ = scope->this_->toObjectString();
-		ObjectString *operand = scope->arguments->vector[0]->toObjectString();
-		if (!operand) {
+		WideString operand;
+		if (!scope->arguments->vector[0].getString(&operand)) {
 			return new IllegalArgument();
 		}
-		return new ObjectBoolean(this_->value > operand->value);
+		return new ObjectBoolean(this_->value > operand);
 	}
 
 	Object * ObjectString::Proto::OperatorGreater::getInstance() {
@@ -160,11 +155,11 @@ namespace goat {
 
 	Object * ObjectString::Proto::OperatorGreaterEqual::run(Scope *scope) {
 		ObjectString *this_ = scope->this_->toObjectString();
-		ObjectString *operand = scope->arguments->vector[0]->toObjectString();
-		if (!operand) {
+		WideString operand;
+		if (!scope->arguments->vector[0].getString(&operand)) {
 			return new IllegalArgument();
 		}
-		return new ObjectBoolean(this_->value >= operand->value);
+		return new ObjectBoolean(this_->value >= operand);
 	}
 
 	Object * ObjectString::Proto::OperatorGreaterEqual::getInstance() {
@@ -209,11 +204,7 @@ namespace goat {
 
 
 	Object * ObjectString::Proto::ValueOf::run(Scope *scope) {
-		Object *arg = scope->arguments->vector[0];
-		if (!arg) {
-			return new ObjectString(Resource::w_undefined);
-		}
-		return new ObjectString(arg->toWideString());
+		return new ObjectString(scope->arguments->vector[0].toWideString());
 	}
 
 	Object * ObjectString::Proto::ValueOf::getInstance() {
@@ -227,21 +218,18 @@ namespace goat {
 		if (scope->arguments->vector.len() < 1) {
 			return new IllegalArgument();
 		}
-		ObjectInteger *start = scope->arguments->vector[0]->toObjectInteger();
-		if (!start || start->value < 0 || start->value > uint32max) {
+		lint start,
+		 	 count;
+		if (!scope->arguments->vector[0].getInteger(&start) || start < 0 || start > uint32max) {
 			return new IllegalArgument();
 		}
-		ObjectInteger *count = nullptr;
-		if (scope->arguments->vector.len() > 1) {
-			count = scope->arguments->vector[1]->toObjectInteger();
-		}
-		uint32 start_ = (uint32)start->value,
+		uint32 start_ = (uint32)start,
 			count_;
-		if (count) {
-			if (count->value < 0 || count->value > uint32max) {
+		if (scope->arguments->vector.len() > 1) {
+			if (!scope->arguments->vector[1].getInteger(&count) || count < 0 || count > uint32max) {
 				return new IllegalArgument();
 			}
-			count_ = (uint32)count->value;
+			count_ = (uint32)count;
 		}
 		else {
 			count_ = this_->value.len() - start_;
@@ -260,20 +248,20 @@ namespace goat {
 		if (scope->arguments->vector.len() < 1) {
 			return new IllegalArgument();
 		}
-		ObjectChar *chSeparator = scope->arguments->vector[0]->toObjectChar();
-		if (chSeparator) {
+		wchar chSeparator;
+		if (scope->arguments->vector[0].getChar(&chSeparator)) {
 			ObjectArray *result = new ObjectArray();
-			unsigned int len = this_->value.len(),
+			uint32 len = this_->value.len(),
 				end = 0,
 				begin = 0;
 			while (end < len) {
-				if (this_->value[end] == chSeparator->value) {
-					result->vector.pushBack(new ObjectString((this_->value.subString(begin, end - begin))));
+				if (this_->value[end] == chSeparator) {
+					result->vector.pushBack((new ObjectString((this_->value.subString(begin, end - begin))))->toContainer());
 					begin = end + 1;
 				}
 				end++;
 			}
-			result->vector.pushBack(new ObjectString((this_->value.subString(begin, end - begin))));
+			result->vector.pushBack((new ObjectString((this_->value.subString(begin, end - begin))))->toContainer());
 			return result;
 		}
 

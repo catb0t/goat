@@ -77,7 +77,7 @@ namespace goat {
 						unsigned int i = 0, count = scope->arguments->vector.len();
 						Token *name = of->function->args->first;
 						while (name && i < count) {
-							scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]->toContainer());
+							scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]);
 							i++;
 							name = name->next;
 						}

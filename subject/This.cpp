@@ -22,6 +22,7 @@ with Goat interpreter.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "This.h"
 #include "Resource.h"
+#include "ObjectUndefined.h"
 
 namespace goat {
 
@@ -35,7 +36,7 @@ namespace goat {
 
 	State * This::StateImpl::next() {
 		State *p = prev;
-		p->ret(scope->this_);
+		p->ret(scope->this_ ? scope->this_ : ObjectUndefined::getInstance());
 		delete this;
 		return p;
 	}

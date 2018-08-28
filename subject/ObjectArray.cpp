@@ -36,9 +36,8 @@ namespace goat {
 	}
 
 	void ObjectArray::trace() {
-		vector.forEach([](Object *obj) {
-			if (obj)
-				obj->mark();
+		vector.forEach([](Container &ctr) {
+			ctr.mark();
 		});
 	}
 
@@ -46,12 +45,12 @@ namespace goat {
 		WideStringBuilder b;
 		b << (wchar)'[';
 		int i = 0;
-		vector.forEach([&](Object *obj) {
+		vector.forEach([&](Container &ctr) {
 			if (i) {
 				b << (wchar)',';
 			}
 			i++;
-			b << obj->toWideStringNotation();
+			b << ctr.toWideStringNotation();
 		});
 		b << (wchar)']';
 		return b.toWideString();
@@ -119,8 +118,7 @@ namespace goat {
 		ObjectArray *this_ = scope->this_->toObjectArray();
 		unsigned int i, l = scope->arguments->vector.len();
 		for (i = 0; i < l; i++) {
-			Object *obj = scope->arguments->vector[i];
-			this_->vector.pushBack(obj);
+			this_->vector.pushBack(scope->arguments->vector[i]);
 		}
 		return nullptr;
 	}

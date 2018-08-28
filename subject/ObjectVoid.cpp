@@ -73,7 +73,7 @@ namespace goat {
 
 
 	Object * ObjectVoid::OperatorOr::run(Scope *scope) {
-		return scope->arguments->vector[0];
+		return scope->arguments->vector[0].toObject();
 	}
 
 	Object * ObjectVoid::OperatorOr::getInstance() {

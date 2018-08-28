@@ -77,11 +77,11 @@ namespace goat {
 
 	Object * ObjectChar::Proto::OperatorLess::run(Scope *scope) {
 		ObjectChar *this_ = scope->this_->toObjectChar();
-		ObjectChar *operand = scope->arguments->vector[0]->toObjectChar();
-		if (!operand) {
+		wchar operand;
+		if (!scope->arguments->vector[0].getChar(&operand)) {
 			return new IllegalArgument();
 		}
-		return new ObjectBoolean(this_->value < operand->value);
+		return new ObjectBoolean(this_->value < operand);
 	}
 
 	Object * ObjectChar::Proto::OperatorLess::getInstance() {
@@ -92,11 +92,11 @@ namespace goat {
 
 	Object * ObjectChar::Proto::OperatorLessEqual::run(Scope *scope) {
 		ObjectChar *this_ = scope->this_->toObjectChar();
-		ObjectChar *operand = scope->arguments->vector[0]->toObjectChar();
-		if (!operand) {
+		wchar operand;
+		if (!scope->arguments->vector[0].getChar(&operand)) {
 			return new IllegalArgument();
 		}
-		return new ObjectBoolean(this_->value <= operand->value);
+		return new ObjectBoolean(this_->value <= operand);
 	}
 
 	Object * ObjectChar::Proto::OperatorLessEqual::getInstance() {
@@ -107,11 +107,11 @@ namespace goat {
 
 	Object * ObjectChar::Proto::OperatorGreater::run(Scope *scope) {
 		ObjectChar *this_ = scope->this_->toObjectChar();
-		ObjectChar *operand = scope->arguments->vector[0]->toObjectChar();
-		if (!operand) {
+		wchar operand;
+		if (!scope->arguments->vector[0].getChar(&operand)) {
 			return new IllegalArgument();
 		}
-		return new ObjectBoolean(this_->value > operand->value);
+		return new ObjectBoolean(this_->value > operand);
 	}
 
 	Object * ObjectChar::Proto::OperatorGreater::getInstance() {
@@ -122,11 +122,11 @@ namespace goat {
 
 	Object * ObjectChar::Proto::OperatorGreaterEqual::run(Scope *scope) {
 		ObjectChar *this_ = scope->this_->toObjectChar();
-		ObjectChar *operand = scope->arguments->vector[0]->toObjectChar();
-		if (!operand) {
+		wchar operand;
+		if (!scope->arguments->vector[0].getChar(&operand)) {
 			return new IllegalArgument();
 		}
-		return new ObjectBoolean(this_->value >= operand->value);
+		return new ObjectBoolean(this_->value >= operand);
 	}
 
 	Object * ObjectChar::Proto::OperatorGreaterEqual::getInstance() {
@@ -182,16 +182,21 @@ namespace goat {
 
 
 	Object * ObjectChar::Proto::ValueOf::run(Scope *scope) {
-		Object *arg = scope->arguments->vector[0];
-		if (arg) {
-			ObjectChar *argChar = arg->toObjectChar();
-			if (argChar) {
-				return new ObjectChar(argChar->value);
-			}
-			ObjectInteger *argInt = arg->toObjectInteger();
-			if (argInt && argInt->value > 0 && argInt->value < 0x10FFFF) {
-				return new ObjectChar((wchar)argInt->value);
-			}
+		Container &arg = scope->arguments->vector[0];
+		wchar argChar ;
+		if (arg.getChar(&argChar)) {
+			return new ObjectChar(argChar);
+		}
+		lint argInt;
+		if (arg.getInteger(&argInt) && argInt > 0
+#ifdef WCHAR_32
+			&& argInt < 0x10FFFF
+#endif
+#ifdef WCHAR_16
+			&& argInt < 0xFFFF
+#endif
+			) {
+			return new ObjectChar((wchar)argInt);
 		}
 		return new ObjectChar(L'\0');
 	}
@@ -222,6 +227,10 @@ namespace goat {
 				ObjectChar *robj = right->data.obj->toObjectChar();
 				return robj && left->data.C == robj->value;
 			}
+		}
+
+		WideString toWideString(Container *ctr) override {
+			return WideString(&ctr->data.C, 1);
 		}
 
 		WideString toWideStringNotation(Container *ctr) override {

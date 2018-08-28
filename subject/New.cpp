@@ -91,7 +91,7 @@ namespace goat {
 						unsigned int i = 0, count = scope->arguments->vector.len();
 						Token *name = objf->function->args->first;
 						while (name && i < count) {
-							scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]->toContainer());
+							scope->objects.insert(Object::createIndex(name->toIdentifier()->name), scope->arguments->vector[i]);
 							i++;
 							name = name->next;
 						}
@@ -148,7 +148,7 @@ namespace goat {
 				return;
 			}
 			case GET_ARGUMENTS:
-				arguments->vector.pushBack(obj);
+				arguments->vector.pushBack(obj->toContainer());
 				return;
 			case DONE:
 				// ignore return object from constructor
