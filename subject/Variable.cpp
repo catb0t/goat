@@ -43,8 +43,8 @@ namespace goat {
 		return new StateImpl(prev, this);
 	}
 
-	State * Variable::createStateAssign(State *prev, Object *obj) {
-		return new StateAssignImpl(prev, obj, this);
+	State * Variable::createStateAssign(State *prev, Container value) {
+		return new StateAssignImpl(prev, value, this);
 	}
 
 	void Variable::trace() {
@@ -64,8 +64,8 @@ namespace goat {
 
 	State * Variable::StateAssignImpl::next() {
 		State *p = prev;
-		scope->replace(var->nameIndex, obj->toContainer());
-		p->ret(obj);
+		scope->replace(var->nameIndex, value);
+		p->ret(value.toObject());
 		delete this;
 		return p;
 	}
@@ -75,9 +75,7 @@ namespace goat {
 	}
 
 	void Variable::StateAssignImpl::trace() {
-		if (obj) {
-			obj->mark();
-		}
+		value.mark();
 	}
 
 	String Variable::toString() {

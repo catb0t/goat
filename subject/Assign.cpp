@@ -40,7 +40,7 @@ namespace goat {
 		right->mark();
 	}
 
-	State *Assign::createState(State *_prev) {
+	State * Assign::createState(State *_prev) {
 		return new StateImpl(_prev, this);
 	}
 
@@ -50,7 +50,7 @@ namespace goat {
 				return expr->right->createState(this);
 			}
 			executed = true;
-			return expr->left->createStateAssign(this, right);
+			return expr->left->createStateAssign(this, right->toContainer());
 		}
 		else {
 			State *p = prev;

@@ -47,13 +47,13 @@ namespace goat {
 
 		class StateAssignImpl : public State {
 		public:
-			Object *obj;
+			Container value;
 			Field *field;
 			Object *left;
 			bool executed;
 
-			StateAssignImpl(State *_prev, Object *_obj, Field *_field) 
-				: State(_prev), obj(_obj), field(_field), left(nullptr), executed(false) {
+			StateAssignImpl(State *_prev, Container _value, Field *_field)
+				: State(_prev), value(_value), field(_field), left(nullptr), executed(false) {
 			}
 			State *next() override;
 			void ret(Object *obj) override;
@@ -71,7 +71,7 @@ namespace goat {
 		Field *toField() override;
 		State * createState(State *_prev) override;
 		State * createState(State *_prev, Object **_context);
-		State * createStateAssign(State *_prev, Object *_obj) override;
+		State * createStateAssign(State *_prev, Container _value) override;
 		void trace() override;
 		String toString() override;
 	};

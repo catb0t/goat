@@ -95,7 +95,7 @@ namespace goat {
 		}
 		case SET_LEFT:
 			step = DONE;
-			return expr->left->createStateAssign(this, newValue);
+			return expr->left->createStateAssign(this, newValue->toContainer());
 		case DONE: {
 			State * p = prev;
 			delete this;

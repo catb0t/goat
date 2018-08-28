@@ -46,8 +46,8 @@ namespace goat {
 		return new StateImpl(prev, this);
 	}
 
-	State * Index::createStateAssign(State *prev, Object *obj) {
-		return new StateAssignImpl(prev, obj, this);
+	State * Index::createStateAssign(State *prev, Container value) {
+		return new StateAssignImpl(prev, value, this);
 	}
 
 	void Index::trace() {
@@ -172,9 +172,9 @@ namespace goat {
 					if (intIdx->value < 0 || intIdx->value >= objArr->vector.len()) {
 						return throw_(new OutOfBounds());
 					}
-					objArr->vector[(unsigned int)intIdx->value] = obj->toContainer();
+					objArr->vector[(unsigned int)intIdx->value] = value;
 					State *p = prev;
-					p->ret(obj);
+					p->ret(value.toObject());
 					delete this;
 					return p;
 				}
@@ -187,13 +187,13 @@ namespace goat {
 					if (intIdx->value < 0 || intIdx->value >= objByteArr->vector.len()) {
 						return throw_(new OutOfBounds());
 					}
-					ObjectInteger *intObj = obj ? obj->toObjectInteger() : nullptr;
-					if (!intObj || intObj->value < 0 || intObj->value > 255) {
+					lint intVal;
+					if (!value.getInteger(&intVal) || intVal < 0 || intVal > 255) {
 						return throw_(new IllegalArgument());
 					}
-					objByteArr->vector[(unsigned int)intIdx->value] = (unsigned char)intObj->value;
+					objByteArr->vector[(unsigned int)intIdx->value] = (unsigned char)intVal;
 					State *p = prev;
-					p->ret(obj);
+					p->ret(value.toObject());
 					delete this;
 					return p;
 				}
@@ -204,9 +204,9 @@ namespace goat {
 				}
 				{
 					Container tmp = index->toContainer();
-					left->insert(&tmp, obj->toContainer());
+					left->insert(&tmp, value);
 					State *p = prev;
-					p->ret(obj);
+					p->ret(value.toObject());
 					delete this;
 					return p;
 				}
@@ -232,6 +232,7 @@ namespace goat {
 	}
 
 	void Index::StateAssignImpl::trace() {
+		value.mark();
 		if (left) {
 			left->mark();
 		}

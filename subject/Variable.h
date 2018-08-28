@@ -42,10 +42,10 @@ namespace goat {
 
 		class StateAssignImpl : public State {
 		public:
-			Object *obj;
+			Container value;
 			Variable *var;
 
-			StateAssignImpl(State *_prev, Object *_obj, Variable *_var) : State(_prev), obj(_obj), var(_var) {
+			StateAssignImpl(State *_prev, Container _value, Variable *_var) : State(_prev), value(_value), var(_var) {
 			}
 			State *next() override;
 			void trace() override;
@@ -61,7 +61,7 @@ namespace goat {
 		Variable *toVariable() override;
 		Identifier *toIdentifier() override;
 		State * createState(State *_prev) override;
-		State * createStateAssign(State *_prev, Object *_obj) override;
+		State * createStateAssign(State *_prev, Container _value) override;
 		void trace() override;
 		String toString() override;
 	};

@@ -30,7 +30,7 @@ namespace goat {
 	class LeftExpression : public Expression {
 	public:
 		LeftExpression *toLeftExpression() override;
-		virtual State *createStateAssign(State *_prev, Object *_obj) = 0;
+		virtual State *createStateAssign(State *_prev, Container value) = 0;
 	};
 
 }

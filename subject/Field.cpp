@@ -48,8 +48,8 @@ namespace goat {
 		return new StateImpl(prev, this, context);
 	}
 
-	State * Field::createStateAssign(State *prev, Object *obj) {
-		return new StateAssignImpl(prev, obj, this);
+	State * Field::createStateAssign(State *prev, Container value) {
+		return new StateAssignImpl(prev, value, this);
 	}
 
 	void Field::trace() {
@@ -112,8 +112,8 @@ namespace goat {
 			}
 			executed = true;
 			State *p = prev;
-			left->objects.insert(Object::createIndex(field->name), obj->toContainer());
-			p->ret(obj);
+			left->objects.insert(Object::createIndex(field->name), value);
+			p->ret(value.toObject());
 			delete this;
 			return p;
 		}
@@ -124,9 +124,7 @@ namespace goat {
 	}
 
 	void Field::StateAssignImpl::trace() {
-		if (obj) {
-			obj->mark();
-		}
+		value.mark();
 		if (left) {
 			left->mark();
 		}

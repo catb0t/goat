@@ -59,14 +59,14 @@ namespace goat {
 				DONE
 			};
 
-			Object *obj;
+			Container value;
 			Index *expr;
 			Step step;
 			Object *left;
 			Object *index;
 
-			StateAssignImpl(State *_prev, Object *_obj, Index *_expr)
-				: State(_prev), obj(_obj), expr(_expr), step(GET_LEFT_OBJECT), left(nullptr), index(nullptr) {
+			StateAssignImpl(State *_prev, Container _value, Index *_expr)
+				: State(_prev), value(_value), expr(_expr), step(GET_LEFT_OBJECT), left(nullptr), index(nullptr) {
 			}
 			State *next() override;
 			void ret(Object *obj) override;
@@ -81,7 +81,7 @@ namespace goat {
 		Index(Expression *tokLeft, Brackets *tokIndex);
 		Index *toIndex() override;
 		State * createState(State *_prev) override;
-		State * createStateAssign(State *_prev, Object *_obj) override;
+		State * createStateAssign(State *_prev, Container _value) override;
 		void trace() override;
 		String toString() override;
 	};
