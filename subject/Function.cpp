@@ -72,7 +72,7 @@ namespace goat {
 			return throw_(thru);
 		case RETURN: {
 			State *p = prev;
-			prev->ret(thru);
+			prev->ret(thru.toObject());
 			delete this;
 			return p;
 		}

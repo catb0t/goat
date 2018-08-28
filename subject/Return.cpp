@@ -22,6 +22,7 @@ with Goat interpreter.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Return.h"
 #include "StringBuilder.h"
+#include "ObjectUndefined.h"
 
 namespace goat {
 
@@ -50,10 +51,10 @@ namespace goat {
 			if (expr->expr) {
 				return expr->expr->createState(this);
 			}
-			return return_(nullptr);
+			return return_(*ObjectUndefined::getContainer());
 		}
 		else {
-			return return_(obj);
+			return return_(obj->toContainer());
 		}
 	}
 

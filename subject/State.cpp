@@ -36,7 +36,7 @@ namespace goat {
 		Thread::current->allocator.free(ptr);
 	}
 
-	State::State(State *_prev) : mode(RUN), thru(nullptr), prev(_prev) {
+	State::State(State *_prev) : mode(RUN), thru(Container::create()), prev(_prev) {
 		if (prev) {
 			scope = prev->scope;
 			level = prev->level;
@@ -76,16 +76,12 @@ namespace goat {
 		old.forEach([](Scope *o) {
 			o->mark();
 		});
-		if (thru) {
-			thru->mark();
-		}
+		thru.mark();
 		trace();
 
 		State *st = prev;
 		while (st) {
-			if (st->thru) {
-				st->thru->mark();
-			}
+			st->thru.mark();
 			st->old.forEach([](Scope *o) {
 				o->mark();
 			});
@@ -98,40 +94,39 @@ namespace goat {
 
 	}
 
-	State * State::throw_(Object *obj) {
-		if (obj) {
-			Location *l = location();
-			if (l) {
-				// write stack trace information
-				ObjectArray *t = nullptr;
-				Container *c = obj->find(Resource::i_trace());
-				if (c) {
-					t = c->toObjectArray();
-				}
-				if (!t) {
-					t = new ObjectArray();
-					obj->insert(Resource::i_trace(), t->toContainer());
-				}
-				t->vector.pushBack((new ObjectString(l->toString().toWideString()))->toContainer());
+	State * State::throw_(Container value) {
+		Object *obj = value.toObject();
+		Location *l = location();
+		if (l) {
+			// write stack trace information
+			ObjectArray *t = nullptr;
+			Container *c = obj->find(Resource::i_trace());
+			if (c) {
+				t = c->toObjectArray();
 			}
+			if (!t) {
+				t = new ObjectArray();
+				obj->insert(Resource::i_trace(), t->toContainer());
+			}
+			t->vector.pushBack((new ObjectString(l->toString().toWideString()))->toContainer());
 		}
 		if (prev) {
 			State *p = prev;
 			p->mode = EXCEPTION;
-			p->thru = obj;
+			p->thru = value;
 			delete this;
 			return p;
 		}
 		else {
-			throw UncaughtException(thru);
+			throw UncaughtException(obj);
 		}
 	}
 
-	State * State::return_(Object *obj) {
+	State * State::return_(Container value) {
 		if (prev) {
 			State *p = prev;
 			p->mode = RETURN;
-			p->thru = obj;
+			p->thru = value;
 			delete this;
 			return p;
 		}

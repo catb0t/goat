@@ -51,7 +51,7 @@ namespace goat {
 		};
 
 		Mode mode;
-		Object *thru;
+		Container thru;
 		State *prev;
 		Scope *scope;
 		PlainVector<Scope*> old;
@@ -68,8 +68,11 @@ namespace goat {
 		virtual void trace();
 		inline void changeScope(Scope *_scope);
 		inline void cloneScope();
-		State * throw_(Object *obj);
-		State * return_(Object *obj);
+		State * throw_(Container value);
+		State * throw_(Object *obj) {
+			return throw_(obj->toContainer());
+		}
+		State * return_(Container value);
 		State * break_();
 		State * continue_();
 		virtual Location * location();
